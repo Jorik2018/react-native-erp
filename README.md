@@ -48,3 +48,14 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+set JAVA_HOME=E:\java\jdk-21.0.5+11
+set PATH=%PATH%;E:\java\jdk-21.0.5+11\bin;"C:\Program Files\Android\cmdline-tools\latest\bin"
+set ANDROID_HOME=C:\Program Files\Android
+sdkmanager --licenses
+sdkmanager "ndk;26.1.10909125"
+
+gradlew assembleDebug
+
+https://stackoverflow.com/questions/78782726/unresolved-reference-r-and-buildconfig-in-react-native-android-project-with-kot
+https://thoughtbot.com/blog/implementing-deep-linking-in-react-native-a-quick-step-by-step-guide

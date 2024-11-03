@@ -109,7 +109,7 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.reactnativeerp"
+    namespace "org.isobit.erp"
     defaultConfig {
         applicationId 'org.isobit.erp'
         minSdkVersion rootProject.ext.minSdkVersion
