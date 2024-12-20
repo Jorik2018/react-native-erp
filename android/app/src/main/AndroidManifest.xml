@@ -21,16 +21,6 @@
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
-        <!-- Add this intent filter for handling MSAL redirection -->
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <!-- Replace 'msauth' and 'pe.demo.msal' with your actual scheme and host from the redirectUri -->
-                <data android:scheme="${appAuthRedirectScheme}" android:host="pe.telefonica.ionicmsal" />
-            </intent-filter>
       </activity>
     </application>
 </manifest>

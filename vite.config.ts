@@ -3,6 +3,7 @@ import fonts from 'vite-plugin-fonts';
 import path from 'path';
 import react from "@vitejs/plugin-react";
 import { VitePWA, type VitePWAOptions } from "vite-plugin-pwa";
+import svgr from "vite-plugin-svgr";
 import { qrcode } from "vite-plugin-qrcode";
 // import { esbuildFlowPlugin } from "@bunchtogether/vite-plugin-flow";
 
@@ -63,11 +64,11 @@ const extensions = [
 ];
 
 const development = process.env.NODE_ENV === "development";
-
 // https://vitejs.dev/config/
 export default defineConfig({
   clearScreen: true,
   plugins: [react(), VitePWA(pwaOptions), qrcode(),
+    svgr({}),
     fonts({
       custom: {
         families: [

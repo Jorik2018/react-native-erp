@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 
-import IconFooterSVG from '../../../src/assets/svg/icons/icon-footer.svg';
+import IconFooterSVG from '../../assets/svg/icons/icon-footer.svg?react';
 
 const Footer = () => {
     return (

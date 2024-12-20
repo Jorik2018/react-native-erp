@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { ScrollView, StyleSheet, View, Text } from 'react-native';
-import IconMovistarSVG from '../assets/svg/icons/icon-movistar.svg';
+import IconMovistarSVG from '../assets/svg/icons/icon-movistar.svg?react';
 //import { Menu, MenuOption, MenuOptions, MenuProvider, MenuTrigger } from 'react-native-popup-menu';
 import { Icon, Menu, Provider } from 'react-native-paper';
 import CustomSelect from './components/CustomSelect';

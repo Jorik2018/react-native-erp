@@ -1,4 +1,4 @@
-package com.rnc_project
+package com.react_native_erp
 
 import android.app.Application
 import com.facebook.react.PackageList
