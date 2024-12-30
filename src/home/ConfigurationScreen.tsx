@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { ScrollView, StyleSheet, TouchableOpacity, View, Text } from 'react-native';
 import Footer from './components/Footer';
 import { Icon } from 'react-native-paper';
-import ConfigurationSVG from '../../src/assets/svg/home/configuration.svg';
+import ConfigurationSVG from '../assets/svg/home/configuration.svg?react';
 
 const ConfigurationScreen = ({ navigation }: any) => {
 

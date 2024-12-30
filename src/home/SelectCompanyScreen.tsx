@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { ScrollView, StyleSheet, TouchableOpacity, View, Text, FlatList } from 'react-native';
 import { Card, Icon, List } from 'react-native-paper';
-import IconEmpresasSVG from '../assets/svg/home/ico_empresas.svg';
+import IconEmpresasSVG from '../assets/svg/home/ico_empresas.svg?react';
 
 const SelectCompanyScreen = ({ navigation }: any) => {
 
@@ -52,6 +52,11 @@ const SelectCompanyScreen = ({ navigation }: any) => {
 
     const backOnPress = useCallback(async () => {
         navigation.goBack();
+        if (navigation.canGoBack()) {
+            navigation.goBack();
+        } else {
+            navigation.replace('Home', { screen: 'home' });
+        }
     }, []);
 
     const handleSelect = useCallback(async (item: any) => {

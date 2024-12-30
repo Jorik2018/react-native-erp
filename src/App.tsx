@@ -11,7 +11,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { AppAuthView } from './AppAuthView';
 import { Provider/*, useSelector */} from 'react-redux';
 import { store } from './store';
-import HomeScreen from './screens/HomeScreen';
+import HomeApp from './home/App';
 //import AuthScreen from './screens/AuthScreen';
 import LoginScreen from './screens/LoginScreen';
 const Stack = createStackNavigator();
@@ -48,16 +48,33 @@ function App() {
   }, []);
 
   const isDarkMode = useColorScheme() === 'dark';
-
+  const linking:any = {
+    prefixes: ['myapp://', 'https://example.com'], // URLs que abren tu app
+    config: {
+      screens: {
+        Home: {
+          screens: {
+            home: 'home',
+            configuration: 'configuration',
+            'select-company': 'select-company',
+          },
+        },
+        Auth: 'auth',
+      },
+    },
+  };
+//linking={linking}
   return <Provider store={store}>
-    <NavigationContainer>
+    <NavigationContainer linking={linking}>
       <SafeAreaView style={{ flex: 1 }}>
         <StatusBar
           barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         />
-        <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={isAuthenticated ? 'Home' : 'Auth'}>
+        <Stack.Navigator 
+        screenOptions={{ headerShown: false }} 
+        initialRouteName={isAuthenticated ? 'Home' : 'Auth'}>
        
-            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="Home" component={HomeApp} />
             <Stack.Screen name="AppAuthView" component={AppAuthView} />
        
             <Stack.Screen

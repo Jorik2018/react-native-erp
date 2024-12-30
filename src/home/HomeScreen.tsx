@@ -3,9 +3,9 @@ import { ScrollView, StyleSheet, View, Text } from 'react-native';
 import IconMovistarSVG from '../assets/svg/icons/icon-movistar.svg?react';
 //import { Menu, MenuOption, MenuOptions, MenuProvider, MenuTrigger } from 'react-native-popup-menu';
 import { Icon, Menu, Provider } from 'react-native-paper';
-import CustomSelect from './components/CustomSelect';
-import Footer from './components/Footer';
-import MenuItem from './components/MenuItem';
+import CustomSelect from '../home/components/CustomSelect';
+import Footer from '../home/components/Footer';
+import MenuItem from '../home/components/MenuItem';
 import { logout } from '../authSlice';
 import { useDispatch } from 'react-redux';
 import RoundedIconButton from '../components/RoundedIconButton';
@@ -25,7 +25,7 @@ const HomeScreen = ({ navigation }: any) => {
   }, []);
 
   const selectCompanyOnPress = useCallback(async () => {
-    navigation.navigate('select-company')
+    navigation.navigate('Home', { screen: 'select-company' })
   }, []);
 
   const logoutOnPress = useCallback(async () => {
