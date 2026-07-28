@@ -27,7 +27,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
+
 
       - name: Mostrar versiones
         run: |
@@ -35,14 +35,7 @@ jobs:
           npm --version
 
       - name: Instalar dependencias
-        run: npm ci --legacy-peer-deps
-
-      # Descomenta si tienes estos scripts en package.json
-      # - name: Ejecutar lint
-      #   run: npm run lint
-
-      # - name: Ejecutar pruebas
-      #   run: npm test -- --run
+        run: npm install --legacy-peer-deps
 
       - name: Compilar aplicación web
         run: npm run build
