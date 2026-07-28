@@ -5,7 +5,8 @@ import { PaperProvider } from "react-native-paper";
 import materialIconsFont from 'react-native-vector-icons/Fonts/MaterialIcons.ttf';
 import materialCommunityIconsFont from "react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf";
 import fontAwesomeFont from "react-native-vector-icons/Fonts/FontAwesome.ttf";
-
+import { store } from './store';
+import { Provider as ReduxProvider } from 'react-redux';
 
 const style = document.createElement("style");
 style.appendChild(document.createTextNode(`@font-face {src: url(${fontAwesomeFont});font-family: FontAwesome;}`));
@@ -16,7 +17,9 @@ document.head.appendChild(style);
 const Root = () => (
   <React.StrictMode>
     <PaperProvider>
-      <App />
+      <ReduxProvider store={store}>
+        <App />
+      </ReduxProvider>
     </PaperProvider>
   </React.StrictMode>
 );

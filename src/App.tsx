@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   Alert,
   Linking,
@@ -9,19 +9,25 @@ import {
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { AppAuthView } from './AppAuthView';
-import { Provider/*, useSelector */} from 'react-redux';
-import { store } from './store';
+import { useDispatch, useSelector} from 'react-redux';
 import HomeApp from './home/App';
 //import AuthScreen from './screens/AuthScreen';
-import LoginScreen from './screens/LoginScreen';
+import LoginScreen from './auth/LoginScreen';
+import { loadTokenFromStorage } from './authSlice';
 const Stack = createStackNavigator();
 
 function App() {
 
-  const [isAuthenticated, _setIsAuthenticated] = useState(false);
+  const dispatch = useDispatch();
 
-  const handleLogin = () => { }
+  const isLoggedIn = useSelector((state: any) => state.auth.isLoggedIn);
 
+  useEffect(() => {
+    loadTokenFromStorage();
+    //dispatch(setupTokenRefresh());
+  }, [dispatch]);
+
+  console.log('isLoggedIn',isLoggedIn);
   useEffect(() => {
     // Handle deep links when the app is already running
     const handleDeepLink = (event: { url: string }) => {
@@ -48,45 +54,46 @@ function App() {
   }, []);
 
   const isDarkMode = useColorScheme() === 'dark';
+
   const linking:any = {
     prefixes: ['myapp://', 'https://example.com'], // URLs que abren tu app
     config: {
       screens: {
-        Home: {
+        home: {
           screens: {
-            home: 'home',
+            default: '',
             configuration: 'configuration',
-            'select-company': 'select-company',
+            'code-licenses': 'code-licenses',
+            'select-company': 'select-company'
           },
         },
-        Auth: 'auth',
+        auth: 'auth',
       },
     },
   };
+
 //linking={linking}
-  return <Provider store={store}>
-    <NavigationContainer linking={linking}>
+  return <NavigationContainer >
       <SafeAreaView style={{ flex: 1 }}>
         <StatusBar
           barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         />
         <Stack.Navigator 
         screenOptions={{ headerShown: false }} 
-        initialRouteName={isAuthenticated ? 'Home' : 'Auth'}>
+        initialRouteName={isLoggedIn ? 'home' : 'auth'}>
        
-            <Stack.Screen name="Home" component={HomeApp} />
-            <Stack.Screen name="AppAuthView" component={AppAuthView} />
+            <Stack.Screen name="home" component={HomeApp} />
+            <Stack.Screen name="appAuthView" component={AppAuthView} />
        
             <Stack.Screen
-              name="Auth"
+              name="auth"
               component={() => (
-                <LoginScreen onLogin={handleLogin} />
+                <LoginScreen />
               )}
             />
         </Stack.Navigator>
       </SafeAreaView>
-    </NavigationContainer>
-  </Provider>;
+    </NavigationContainer>;
 }
 
 export default App;

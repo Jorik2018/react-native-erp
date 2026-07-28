@@ -11,8 +11,8 @@ import { useNavigation } from '@react-navigation/native';
 
 const ContraseniaPanel = () => {
 
-    const navigation:any = useNavigation();
-    
+    const navigation: any = useNavigation();
+
     const dispatch = useDispatch();
 
     const documentOptions = [
@@ -46,8 +46,8 @@ const ContraseniaPanel = () => {
 
     const onSubmit = (data: any) => {
         console.log('Login data:', data);
-        dispatch(login());
-        navigation.navigate('Home')
+        dispatch(login({ token: data.name, expirationTime: 10000 }));
+        navigation.navigate('home')
         //router.push('/');
     };
 
@@ -63,7 +63,7 @@ const ContraseniaPanel = () => {
                                 ...styles.modalItem,
                                 backgroundColor: item.label == selectedDocument ? '#f1f1f1' : 'white'
                             }}>
-                                <Text style={{color:(item.label == selectedDocument ?'#000':'#939393')}}>{item.label}</Text>
+                                <Text style={{ color: (item.label == selectedDocument ? '#000' : '#939393') }}>{item.label}</Text>
                             </TouchableOpacity>
                         )}
                     />
@@ -79,15 +79,15 @@ const ContraseniaPanel = () => {
                 setShowModal(true)
             }}>
                 <Text>{selectedDocument || 'Seleccionar documento'}</Text>
-                <Icon name="expand-more" 
-                size={24} color="#999" 
-                style={{padding:0,margin:0}} />
+                <Icon name="expand-more"
+                    size={24} color="#999"
+                    style={{ padding: 0, margin: 0 }} />
             </TouchableOpacity>
             <Controller
                 control={control}
                 rules={{ required: 'El documento es requerido' }}
                 name="document"
-                render={({ field: { onChange, onBlur, value } }:any) => (
+                render={({ field: { onChange, onBlur, value } }: any) => (
                     <TextInput
                         label="Nro. de documento"
                         value={value}
@@ -105,7 +105,7 @@ const ContraseniaPanel = () => {
                 control={control}
                 rules={{ required: 'La contraseña es requerida', minLength: 6 }}
                 name="password"
-                render={({ field: { onChange, onBlur, value } }:any) => (
+                render={({ field: { onChange, onBlur, value } }: any) => (
                     <TextInput
                         label="Contraseña"
                         value={value}

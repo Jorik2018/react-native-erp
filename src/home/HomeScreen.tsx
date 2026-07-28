@@ -9,8 +9,11 @@ import MenuItem from '../home/components/MenuItem';
 import { logout } from '../authSlice';
 import { useDispatch } from 'react-redux';
 import RoundedIconButton from '../components/RoundedIconButton';
+import { useNavigation } from '@react-navigation/native';
 
-const HomeScreen = ({ navigation }: any) => {
+const HomeScreen = () => {
+
+  const navigation:any = useNavigation();
 
   const [visible, setVisible] = useState(false);
 
@@ -21,17 +24,17 @@ const HomeScreen = ({ navigation }: any) => {
   const closeMenu = () => setVisible(false);
 
   const configurationOnPress = useCallback(async () => {
-    navigation.navigate('configuration')
+    navigation.navigate('home', { screen: 'configuration' });
   }, []);
 
   const selectCompanyOnPress = useCallback(async () => {
-    navigation.navigate('Home', { screen: 'select-company' })
+    navigation.navigate('home', { screen: 'select-company' })
   }, []);
 
   const logoutOnPress = useCallback(async () => {
     dispatch(logout());
     //router.push('/');
-    navigation.navigate('login')
+    navigation.navigate('auth')
   }, []);
 
   return (

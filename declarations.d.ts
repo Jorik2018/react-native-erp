@@ -6,6 +6,8 @@ declare module "*.svg?react" {
     export default content;
 }
 
+declare module 'crypto-js';
+
 declare module '*.png' {
     const value: any;
     export default value;

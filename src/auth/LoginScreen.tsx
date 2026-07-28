@@ -2,13 +2,13 @@
 import { View, Image, StyleSheet } from 'react-native';
 import { TabView, TabBar } from 'react-native-tab-view';
 import { useState } from 'react';
-import ContraseniaPanel from '../home/ContraseniaPanel';
-import LoginProductScreen from './LoginProductScreen';
+import ContraseniaPanel from './ContraseniaPanel';
+import LoginProductScreen from '../screens/LoginProductScreen';
 import { PaperProvider } from 'react-native-paper';
 import bannerMaia from '../assets/img/baner_maia.png';
 
 // import globalStyles from '../../src/assets/styles/globalStyles';
-export default function LoginScreen({ navigation }: any) {
+export default function LoginScreen() {
 
   const [index, setIndex] = useState(1);
 

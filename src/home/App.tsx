@@ -14,9 +14,9 @@ export default function HomeApp() {
       gestureDirection: 'vertical',  // Swiping up or down to close the screen
       cardStyleInterpolator: CardStyleInterpolators.forFadeFromBottomAndroid, // Fade in from bottom
     }}
-      initialRouteName="home">
+      initialRouteName="default">
       <Stack.Screen
-        name="home"
+        name="default"
         options={{ headerShown: false }}
         component={HomeScreen} />
 
