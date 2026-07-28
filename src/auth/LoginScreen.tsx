@@ -7,7 +7,6 @@ import LoginProductScreen from '../screens/LoginProductScreen';
 import { PaperProvider } from 'react-native-paper';
 import bannerMaia from '../assets/img/baner_maia.png';
 
-// import globalStyles from '../../src/assets/styles/globalStyles';
 export default function LoginScreen() {
 
   const [index, setIndex] = useState(1);
@@ -32,8 +31,7 @@ export default function LoginScreen() {
     <PaperProvider>
       <View style={{ flex: 1, backgroundColor: 'white' }}>
 
-      
-         <Image
+        <Image
           source={bannerMaia}
           style={styles.headerImage}
         />

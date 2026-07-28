@@ -6,70 +6,87 @@ import ConfigurationSVG from '../assets/svg/home/configuration.svg?react';
 
 const ConfigurationScreen = ({ navigation }: any) => {
 
-    const [contact, setContact] = useState({ firstName: 'HUGO', lastName: 'SALAZAR' });
+    const [contact] = useState({ firstName: 'HUGO', lastName: 'SALAZAR' });
 
-    const [legalName, setLegalName] = useState('PRUEBAS AMDOCS SET4');
+    const [legalName] = useState('PRUEBAS AMDOCS SET4');
 
-    const [rolName, setRolName] = useState('Decisor');
+    const [rolName] = useState('Decisor');
 
-    const [listSidebar, setListSidebar] = useState([
+    const listSidebar = [
         {
-          icon: 'support_regular_24',
-          text: 'Cambiar de empresa',
-          view: true,
-          url: '/home/select-company',
+            icon: 'office-building',
+            text: 'Cambiar de empresa',
+            view: true,
+            url: '/home/select-company',
         },
         {
-          icon: 'support_regular_24',
-          text: 'Cambiar contraseña',
-          view: true,
-          url: '/home',
+            icon: 'lock-reset',
+            text: 'Cambiar contraseña',
+            view: true,
+            url: '/home',
         },
         {
-          icon: 'authentication_error_regular_20',
-          text: 'Darme de baja',
-          view: true,
-          url: '/home',
+            icon: 'account-remove',
+            text: 'Darme de baja',
+            view: true,
+            url: '/home',
         },
         {
-          icon: 'code',
-          text: 'Licencias de codigo abierto',
-          view: true,
-          url: 'code-licenses',
+            icon: 'code-braces',
+            text: 'Licencias de codigo abierto',
+            view: true,
+            url: 'code-licenses',
         },
         {
-          icon: 'support_regular_24',
-          text: 'Mis compras',
-          view: true,
-          url: '/home',
+            icon: 'cart-outline',
+            text: 'Mis compras',
+            view: true,
+            url: '/home',
         },
         {
-          icon: 'support_regular_24',
-          text: 'Configuraciones',
-          view: false,
-          url: '/home',
+            icon: 'cog-outline',
+            text: 'Configuraciones',
+            view: false,
+            url: '/home',
         },
         {
-          icon: 'support_regular_24',
-          text: 'Con mi número',
-          view: false,
-          url: '/home',
+            icon: 'cellphone',
+            text: 'Con mi número',
+            view: false,
+            url: '/home',
         },
         {
-          icon: 'support_regular_24',
-          text: 'Soporte',
-          view: true,
-          url: '/home',
+            icon: 'headset',
+            text: 'Soporte',
+            view: true,
+            url: 'home',
         },
-      ]);
+        {
+            icon: 'account-group',
+            text: 'Usuarios',
+            view: true,
+            route: 'users',
+            screen: 'UserList',
+        },
+    ];
 
-    const handleSelectOption = useCallback(async (value: any) => {
-        navigation.navigate(value.url)
-    }, []);
+    const handleSelectOption = useCallback(
+        (value: any) => {
+            if (value.screen) {
+                navigation.navigate(value.route, {
+                    screen: value.screen,
+                });
+                return;
+            }
+
+            navigation.navigate(value.route);
+        },
+        [navigation],
+    );
 
     const backOnPress = useCallback(async () => {
         navigation.goBack();
-    }, []);
+    }, [navigation]);
 
     return (
         <View style={styles.container}>
@@ -89,7 +106,7 @@ const ConfigurationScreen = ({ navigation }: any) => {
                 <TouchableOpacity style={styles.backButton} onPress={backOnPress}>
                     <Icon source="chevron-left" size={32} color="white" />
                 </TouchableOpacity>
-                <ConfigurationSVG style={{ position: 'absolute',width:'100%' }} />
+                <ConfigurationSVG style={{ position: 'absolute', width: '100%' }} />
             </View>
             <ScrollView contentContainerStyle={styles.content}>
                 {listSidebar.map((item, index) => (
@@ -97,8 +114,16 @@ const ConfigurationScreen = ({ navigation }: any) => {
                         <TouchableOpacity key={index} style={styles.sidebarItem} onPress={() => handleSelectOption(item)}>
                             <View style={styles.sidebarContent}>
                                 <Icon source={item.icon} size={24} color="#5e6067" />
-                                <Text style={styles.sidebarText}>{item.text}</Text>
-                                <Icon source="chevron-right" size={26} color="#5e6067" />
+
+                                <Text style={styles.sidebarText}>
+                                    {item.text}
+                                </Text>
+
+                                <Icon
+                                    source="chevron-right"
+                                    size={26}
+                                    color="#5e6067"
+                                />
                             </View>
                         </TouchableOpacity>
                     )
@@ -154,7 +179,7 @@ const styles = StyleSheet.create({
         height: 48,
         width: 48,
         borderRadius: 24,
-        marginBottom:20,
+        marginBottom: 20,
         backgroundColor: '#FFFFFF',
         justifyContent: 'center',
         alignItems: 'center',
@@ -166,7 +191,7 @@ const styles = StyleSheet.create({
     name: {
         fontSize: 18,
         color: '#FFFFFF',
-        marginBottom:18
+        marginBottom: 18
     },
     legalName: {
         color: '#FFFFFF',
@@ -200,9 +225,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     sidebarText: {
-        marginLeft:12,
+        marginLeft: 12,
         fontSize: 16,
-        flex:1,
+        flex: 1,
         color: '#5e6067',
     },
 });

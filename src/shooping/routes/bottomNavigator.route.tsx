@@ -1,27 +1,27 @@
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {
   BottomNavigation,
   BottomNavigationTab,
   Icon,
-} from "@ui-kitten/components";
-import React from "react";
-import HomeScreen from "../screens/home.screen";
-import NewsScreen from "../screens/news.screen";
-import OrdersScreen from "../screens/orders.screen";
-import ProductDetailScreen from "../screens/product-detail.screen";
-import ProductListScreen from "../screens/product-list.screen";
-import SettingsScreen from "../screens/settings.screen";
-import { CartScreen } from "../screens/cart.screen";
+} from '@ui-kitten/components';
+import React from 'react';
+import HomeScreen from '../screens/home.screen';
+import NewsScreen from '../screens/news.screen';
+import OrdersScreen from '../screens/orders.screen';
+import ProductDetailScreen from '../screens/product-detail.screen';
+import ProductListScreen from '../screens/product-list.screen';
+import SettingsScreen from '../screens/settings.screen';
+import { CartScreen } from '../screens/cart.screen';
 
 const { Navigator, Screen } = createBottomTabNavigator();
 
-const PersonIcon = (props: any) => <Icon {...props} name='home-outline' />;
+const PersonIcon = (props: any) => <Icon {...props} name="home-outline" />;
 
-const OrdersIcon = (props: any) => <Icon {...props} name='shopping-cart-outline' />;
+const OrdersIcon = (props: any) => <Icon {...props} name="shopping-cart-outline" />;
 
-const NewsIcon = (props: any) => <Icon {...props} name='globe-outline' />;
+const NewsIcon = (props: any) => <Icon {...props} name="globe-outline" />;
 
-const SettingsIcon = (props: any) => <Icon {...props} name='settings-outline' />;
+const SettingsIcon = (props: any) => <Icon {...props} name="settings-outline" />;
 
 const BottomTabBar = ({ navigation, state }: any) => (
   <BottomNavigation

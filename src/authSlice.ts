@@ -1,62 +1,193 @@
-import { createSlice } from '@reduxjs/toolkit';
-import Keychain from 'react-native-keychain';
+import {
+  createSlice,
+  PayloadAction,
+} from '@reduxjs/toolkit';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CryptoJS from 'crypto-js';
 
-const initialState:any = {
+interface AuthState {
+  isLoggedIn: boolean;
+  isAuthLoaded: boolean;
+  token: string | null;
+  tokenExpiration: number | null;
+}
+
+interface LoginPayload {
+  token: string;
+  expirationTime: number;
+}
+
+const initialState: AuthState = {
   isLoggedIn: false,
+  isAuthLoaded: false,
   token: null,
   tokenExpiration: null,
 };
 
-const encryptData = (data:any) => {
-  return CryptoJS.AES.encrypt(data, 'secret-key').toString(); // Aquí puedes usar una clave secreta
+const SECRET_KEY = 'secret-key';
+
+const encryptData = (data: string): string => {
+  return CryptoJS.AES.encrypt(
+    data,
+    SECRET_KEY,
+  ).toString();
 };
 
-const decryptData = (encryptedData:any) => {
-  const bytes = CryptoJS.AES.decrypt(encryptedData, 'secret-key');
+const decryptData = (
+  encryptedData: string,
+): string => {
+  const bytes = CryptoJS.AES.decrypt(
+    encryptedData,
+    SECRET_KEY,
+  );
+
   return bytes.toString(CryptoJS.enc.Utf8);
 };
 
 const authSlice = createSlice({
   name: 'auth',
   initialState,
+
   reducers: {
-    login: async (state, action) => {
-      state.isLoggedIn = true;
-      const { token, expirationTime } = action.payload;
-      state.token = token;
-      state.tokenExpiration = expirationTime;
-      state.isLoggedIn = true;
-      await AsyncStorage.setItem('token', encryptData(token));
-      await AsyncStorage.setItem('tokenExpiration', encryptData(expirationTime.toString()));
+    startAuthLoading: state => {
+      state.isAuthLoaded = false;
     },
-    logout: (state) => {
+
+    login: (
+      state,
+      action: PayloadAction<LoginPayload>,
+    ) => {
+      state.isLoggedIn = true;
+      state.isAuthLoaded = true;
+      state.token = action.payload.token;
+      state.tokenExpiration =
+        action.payload.expirationTime;
+    },
+
+    logout: state => {
       state.isLoggedIn = false;
+      state.isAuthLoaded = true;
+      state.token = null;
+      state.tokenExpiration = null;
     },
   },
 });
 
-export const { login, logout } = authSlice.actions;
+export const {
+  login,
+  logout,
+  startAuthLoading,
+} = authSlice.actions;
 
-export const loadTokenFromStorage = () => async (dispatch:any) => {
-  try {
-    // Retrieve the token and expiration time from secure storage
-    const token:any = await Keychain.getGenericPassword('token');
-    const expirationTime:any = await Keychain.getGenericPassword('tokenExpiration');
+export const loginAndSave =
+  (payload: LoginPayload) =>
+  async (dispatch: any) => {
+    try {
+      const { token, expirationTime } = payload;
 
-    if (token && expirationTime) {
-      const currentTime = new Date().getTime();
-      if (currentTime < expirationTime) {
-        // If token is valid, set it in the Redux store
-        dispatch(login({ token, expirationTime }));
-      } else {
-        dispatch(logout());
-      }
+      await AsyncStorage.multiSet([
+        ['token', encryptData(token)],
+        [
+          'tokenExpiration',
+          encryptData(
+            expirationTime.toString(),
+          ),
+        ],
+      ]);
+
+      dispatch(login(payload));
+    } catch (error) {
+      console.error(
+        'Error guardando el token:',
+        error,
+      );
+
+      throw error;
     }
-  } catch (error) {
-    console.error('Error loading token from storage:', error);
-  }
-};
+  };
+
+export const logoutAndClear =
+  () => async (dispatch: any) => {
+    try {
+      await AsyncStorage.multiRemove([
+        'token',
+        'tokenExpiration',
+      ]);
+    } finally {
+      dispatch(logout());
+    }
+  };
+
+export const loadTokenFromStorage =
+  () => async (dispatch: any) => {
+    dispatch(startAuthLoading());
+
+    try {
+      const values =
+        await AsyncStorage.multiGet([
+          'token',
+          'tokenExpiration',
+        ]);
+
+      const encryptedToken =
+        values[0]?.[1];
+
+      const encryptedExpiration =
+        values[1]?.[1];
+
+      if (
+        !encryptedToken ||
+        !encryptedExpiration
+      ) {
+        dispatch(logout());
+        return;
+      }
+
+      const token =
+        decryptData(encryptedToken);
+
+      const expirationText =
+        decryptData(encryptedExpiration);
+
+      const expirationTime =
+        Number(expirationText);
+
+      const isValid =
+        token.length > 0 &&
+        Number.isFinite(expirationTime) &&
+        Date.now() < expirationTime;
+
+      if (isValid) {
+        dispatch(
+          login({
+            token,
+            expirationTime,
+          }),
+        );
+
+        return;
+      }
+
+      await AsyncStorage.multiRemove([
+        'token',
+        'tokenExpiration',
+      ]);
+
+      dispatch(logout());
+    } catch (error) {
+      console.error(
+        'Error cargando el token:',
+        error,
+      );
+
+      await AsyncStorage.multiRemove([
+        'token',
+        'tokenExpiration',
+      ]);
+
+      dispatch(logout());
+    }
+  };
 
 export default authSlice.reducer;

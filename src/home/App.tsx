@@ -6,24 +6,24 @@ import SelectCompanyScreen from './SelectCompanyScreen';
 
 const Stack = createStackNavigator();
 
-export default function HomeApp() {
+export default function HomeNavigator() {
   return (
     <Stack.Navigator
-    screenOptions={{
-      gestureEnabled: true,  // Enables swipe gesture
-      gestureDirection: 'vertical',  // Swiping up or down to close the screen
-      cardStyleInterpolator: CardStyleInterpolators.forFadeFromBottomAndroid, // Fade in from bottom
-    }}
-      initialRouteName="default">
+      screenOptions={{
+        gestureEnabled: true,  // Enables swipe gesture
+        gestureDirection: 'vertical',  // Swiping up or down to close the screen
+        cardStyleInterpolator: CardStyleInterpolators.forFadeFromBottomAndroid, // Fade in from bottom
+      }}
+      >
       <Stack.Screen
         name="default"
         options={{ headerShown: false }}
         component={HomeScreen} />
 
-      <Stack.Screen 
+      <Stack.Screen
         name="configuration"
         component={ConfigurationScreen}
-        options={{ 
+        options={{
           title: "Configuration",
           headerShown: false
         }} />

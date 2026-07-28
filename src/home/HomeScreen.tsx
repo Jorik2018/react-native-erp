@@ -1,19 +1,18 @@
 import React, { useCallback, useState } from 'react';
 import { ScrollView, StyleSheet, View, Text } from 'react-native';
 import IconMovistarSVG from '../assets/svg/icons/icon-movistar.svg?react';
-//import { Menu, MenuOption, MenuOptions, MenuProvider, MenuTrigger } from 'react-native-popup-menu';
-import { Icon, Menu, Provider } from 'react-native-paper';
+import { Button, Menu, Provider } from 'react-native-paper';
 import CustomSelect from '../home/components/CustomSelect';
 import Footer from '../home/components/Footer';
 import MenuItem from '../home/components/MenuItem';
-import { logout } from '../authSlice';
+import { logoutAndClear } from '../authSlice';
 import { useDispatch } from 'react-redux';
 import RoundedIconButton from '../components/RoundedIconButton';
 import { useNavigation } from '@react-navigation/native';
 
 const HomeScreen = () => {
 
-  const navigation:any = useNavigation();
+  const navigation: any = useNavigation();
 
   const [visible, setVisible] = useState(false);
 
@@ -23,19 +22,30 @@ const HomeScreen = () => {
 
   const closeMenu = () => setVisible(false);
 
-  const configurationOnPress = useCallback(async () => {
-    navigation.navigate('home', { screen: 'configuration' });
-  }, []);
+  const configurationOnPress = useCallback(() => {
+    closeMenu();
+    requestAnimationFrame(() => {
+      navigation.push('configuration');
+    });
+  }, [navigation]);
+
+const logoutOnPress = useCallback(async () => {
+  try {
+    closeMenu();
+
+    await dispatch(logoutAndClear() as any);
+
+    // No uses navigation.navigate('auth')
+  } catch (error) {
+    console.error('Error cerrando sesión:', error);
+  }
+}, [dispatch]);
 
   const selectCompanyOnPress = useCallback(async () => {
-    navigation.navigate('home', { screen: 'select-company' })
-  }, []);
+    navigation.navigate('select-company');
+  }, [navigation]);
 
-  const logoutOnPress = useCallback(async () => {
-    dispatch(logout());
-    //router.push('/');
-    navigation.navigate('auth')
-  }, []);
+
 
   return (
     <Provider>
@@ -80,25 +90,21 @@ const HomeScreen = () => {
           <View style={styles.section}>
             <Text>Mis Solicitudes</Text>
           </View>
+
+          <Button
+            mode="contained"
+            onPress={() => {
+              console.log('BOTÓN DIRECTO');
+              navigation.navigate('configuration');
+            }}
+          >
+            Abrir configuración
+          </Button>
         </ScrollView>
         <Footer />
       </View>
     </Provider>
   );
-};
-
-const optionsStyles = {
-  optionsContainer: {
-    padding: 5,
-    width: 120,
-    borderRadius: 8,
-  },
-  optionWrapper: {
-    height: 56,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 10,
-  },
 };
 
 const styles = StyleSheet.create({

@@ -4,16 +4,17 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useForm, Controller } from 'react-hook-form';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { login } from '../authSlice';
+import { loginAndSave } from '../authSlice';
 //import { useRouter } from 'expo-router';
 import globalStyles from '../assets/styles/globalStyles';
 import { useNavigation } from '@react-navigation/native';
+import { AppDispatch } from '../store';
 
 const ContraseniaPanel = () => {
 
     const navigation: any = useNavigation();
 
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
 
     const documentOptions = [
         { label: 'DNI', value: 'DNI' },
@@ -25,7 +26,7 @@ const ContraseniaPanel = () => {
     const { control, handleSubmit, formState: { errors }, watch } = useForm({
         defaultValues: {
             document: '',
-            password: ''
+            password: '',
         },
     });
 
@@ -44,13 +45,25 @@ const ContraseniaPanel = () => {
         setShowModal(false);
     };
 
-    const onSubmit = (data: any) => {
-        console.log('Login data:', data);
-        dispatch(login({ token: data.name, expirationTime: 10000 }));
-        navigation.navigate('home')
-        //router.push('/');
-    };
+    const onSubmit = async (data: any) => {
+        const expirationTime =
+            Date.now() + 24 * 60 * 60 * 1000;
 
+        try {
+            console.log(data);
+            await dispatch(
+                loginAndSave({
+                    token: data.document,
+                    expirationTime,
+                }) as any,
+            );
+        } catch (error) {
+            console.error(
+                'No se pudo iniciar sesión:',
+                error,
+            );
+        }
+    };
     return <ScrollView style={styles.scene}>
         <Portal>
             <Modal visible={showModal} contentContainerStyle={{ alignItems: 'center' }} onDismiss={() => { setShowModal(false) }} >

@@ -1,0 +1,66 @@
+name: Build and deploy React Native Web
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: react-native-web-production
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    name: Build and deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v6
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Mostrar versiones
+        run: |
+          node --version
+          npm --version
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      # Descomenta si tienes estos scripts en package.json
+      # - name: Ejecutar lint
+      #   run: npm run lint
+
+      # - name: Ejecutar pruebas
+      #   run: npm test -- --run
+
+      - name: Compilar aplicación web
+        run: npm run build
+
+      - name: Verificar compilación
+        run: |
+          test -d dist
+          test -f dist/index.html
+          ls -la dist
+
+      - name: Desplegar por FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftp
+          port: 21
+          local-dir: dist/
+          server-dir: /reactnative/
+          dangerous-clean-slate: false
