@@ -35,7 +35,7 @@ jobs:
           npm --version
 
       - name: Instalar dependencias
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
       # Descomenta si tienes estos scripts en package.json
       # - name: Ejecutar lint
@@ -62,5 +62,5 @@ jobs:
           protocol: ftp
           port: 21
           local-dir: dist/
-          server-dir: /reactnative/
+          server-dir: /reactnative.dbasure.com/
           dangerous-clean-slate: false
