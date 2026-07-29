@@ -40,7 +40,7 @@ jobs:
       - name: Compilar aplicación web
         run: npm run build
 
-      - name: Verificar compilación
+      - name: Verificar archivos generados
         run: |
           test -d dist
           test -f dist/index.html
@@ -48,12 +48,28 @@ jobs:
           ls -la dist
           ls -la dist/assets
 
-      - name: Verificar CommonJS residual
+      - name: Instalar Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Iniciar vista previa
         run: |
-          if grep -RInE '(^|[^a-zA-Z0-9_$])require\(' dist/assets/*.js; then
-            echo "ERROR: El bundle contiene require() sin transformar"
-            exit 1
-          fi
+          npm run preview -- --host 127.0.0.1 --port 4173 > /tmp/vite-preview.log 2>&1 &
+          echo $! > /tmp/vite-preview.pid
+
+      - name: Esperar servidor
+        run: |
+          for i in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:4173/ > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+
+          cat /tmp/vite-preview.log
+          exit 1
+
+      - name: Probar aplicación en navegador
+        run: node scripts/smoke-test.mjs
 
       - name: Desplegar por FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.4.0
