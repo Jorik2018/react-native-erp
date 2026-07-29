@@ -1,17 +1,18 @@
 import React, { useEffect } from 'react';
 import {
   ActivityIndicator,
-  Linking,
-  Platform,
   SafeAreaView,
   StatusBar,
   useColorScheme,
   View,
 } from 'react-native';
 
-import { getStateFromPath, NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import {
+  NavigationContainer,
+  type LinkingOptions,
+} from '@react-navigation/native';
 
+import { createStackNavigator } from '@react-navigation/stack';
 import { useDispatch, useSelector } from 'react-redux';
 import { Icon } from '@rneui/themed';
 
@@ -19,12 +20,14 @@ import { AppAuthView } from './AppAuthView';
 import HomeNavigator from './home/App';
 import LoginScreen from './auth/LoginScreen';
 import { loadTokenFromStorage } from './authSlice';
+
 import UserForm from './user/views/UserForm';
-import { UsersProvider } from './user/context/UserContext';
 import UserList from './user/views/UserList';
+import { UsersProvider } from './user/context/UserContext';
 
 const RootStack = createStackNavigator();
 const UsersStack = createStackNavigator();
+
 const linking: LinkingOptions<any> = {
   prefixes: [
     'myapp://',
@@ -47,49 +50,8 @@ const linking: LinkingOptions<any> = {
       auth: 'auth',
     },
   },
-
-  async getInitialURL() {
-    if (Platform.OS === 'web') {
-      return window.location.href;
-    }
-
-    return Linking.getInitialURL();
-  },
-
-  subscribe(listener) {
-    if (Platform.OS === 'web') {
-      const handlePopState = () => {
-        listener(window.location.href);
-      };
-
-      window.addEventListener('popstate', handlePopState);
-
-      return () => {
-        window.removeEventListener(
-          'popstate',
-          handlePopState,
-        );
-      };
-    }
-
-    const subscription = Linking.addEventListener(
-      'url',
-      ({ url }) => listener(url),
-    );
-
-    return () => {
-      subscription.remove();
-    };
-  },
 };
-console.log(
-  'PARSED /users:',
-  JSON.stringify(
-    getStateFromPath('/users', linking.config),
-    null,
-    2,
-  ),
-);
+
 function UsersNavigator() {
   return (
     <UsersStack.Navigator initialRouteName="UserList">
@@ -98,14 +60,15 @@ function UsersNavigator() {
         component={UserList}
         options={({ navigation }) => ({
           title: 'Lista de usuarios',
+
           headerRight: () => (
             <Icon
+              name="add"
+              size={30}
               onPress={() => {
-                console.log(34567);
-                navigation.navigate('UserForm')
-
+                navigation.navigate('UserForm');
               }}
-              name="add" size={30} />
+            />
           ),
         })}
       />
@@ -127,14 +90,11 @@ function App() {
   const {
     isLoggedIn,
     isAuthLoaded,
-  } = useSelector(
-    (state: any) => state.auth,
-  );
+  } = useSelector((state: any) => state.auth);
 
   const isDarkMode = useColorScheme() === 'dark';
 
   useEffect(() => {
-    // Debes despachar la acción.
     dispatch(loadTokenFromStorage() as any);
   }, [dispatch]);
 
@@ -151,41 +111,10 @@ function App() {
       </View>
     );
   }
-  const initialState =
-    Platform.OS === 'web'
-      ? getStateFromPath(
-        window.location.pathname,
-        linking.config,
-      )
-      : undefined;
 
-  console.log(
-    'URL inicial:',
-    window.location.pathname,
-  );
-
-  console.log(
-    'Estado inicial:',
-    JSON.stringify(initialState, null, 2),
-  );
   return (
-    <UsersProvider >
-      <NavigationContainer
-        linking={linking}
-        initialState={initialState}
-        onReady={() => {
-          console.log(
-            'Navigation ready:',
-            window.location.pathname,
-          );
-        }}
-        onStateChange={state => {
-          console.log(
-            'Navigation state:',
-            JSON.stringify(state, null, 2),
-          );
-        }}
-      >
+    <UsersProvider>
+      <NavigationContainer linking={linking}>
         <SafeAreaView style={{ flex: 1 }}>
           <StatusBar
             barStyle={
@@ -196,7 +125,9 @@ function App() {
           />
 
           <RootStack.Navigator
-            screenOptions={{ headerShown: false }}
+            screenOptions={{
+              headerShown: false,
+            }}
           >
             {isLoggedIn ? (
               <>

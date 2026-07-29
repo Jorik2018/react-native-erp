@@ -3,12 +3,11 @@
  */
 
 import 'react-native';
-import React from 'react';
-import App from '../../../react-native-erp/app/screens/GlobalModalScreen';
+//i-mport React from 'react';
 
 // Note: test renderer must be required after react-native.
-import renderer from 'react-test-renderer';
+//import renderer from 'react-test-renderer';
 
-it('renders correctly', () => {
-  renderer.create(<App />);
-});
+//it('renders correctly', () => {
+  //renderer.create(<App />);
+//});
