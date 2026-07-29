@@ -27,7 +27,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-
+          cache: npm
 
       - name: Mostrar versiones
         run: |
@@ -35,7 +35,7 @@ jobs:
           npm --version
 
       - name: Instalar dependencias
-        run: npm install --legacy-peer-deps
+        run: npm ci --legacy-peer-deps
 
       - name: Compilar aplicación web
         run: npm run build
@@ -44,7 +44,16 @@ jobs:
         run: |
           test -d dist
           test -f dist/index.html
+          test -d dist/assets
           ls -la dist
+          ls -la dist/assets
+
+      - name: Verificar CommonJS residual
+        run: |
+          if grep -RInE '(^|[^a-zA-Z0-9_$])require\(' dist/assets/*.js; then
+            echo "ERROR: El bundle contiene require() sin transformar"
+            exit 1
+          fi
 
       - name: Desplegar por FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.4.0
