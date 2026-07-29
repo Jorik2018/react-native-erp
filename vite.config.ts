@@ -159,7 +159,11 @@ export default defineConfig({
       ),
     },
   },
-
+  build: {
+    commonjsOptions: {
+      transformMixedEsModules: true,
+    },
+  },
   optimizeDeps: {
     esbuildOptions: {
       resolveExtensions: extensions,
