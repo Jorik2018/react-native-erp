@@ -1,4 +1,4 @@
-import {useCallback, useRef} from 'react';
+import { useCallback, useRef } from 'react';
 import {
   Image,
   Platform,
@@ -23,6 +23,7 @@ import Color from './Color';
 
 import attachmentIcon from './assets/Attachment-grey.png';
 import emojiIcon from './assets/Emoji-default.png';
+import { toImageSource } from '../utils/imageSource';
 
 type ContentSize = {
   width: number;
@@ -54,7 +55,7 @@ type ComposerProps = {
   onTextChanged?: (text: string) => void;
   onInputSizeChanged?: (size: ContentSize) => void;
   onSend?: (
-    message: {text: string},
+    message: { text: string },
     shouldResetInput: boolean,
   ) => void;
   onAttachmentPress?: () => void;
@@ -73,9 +74,9 @@ export default function Composer({
   inputWrapperStyle,
   attachmentImageStyle,
   sendImageStyle,
-  onTextChanged = () => {},
-  onInputSizeChanged = () => {},
-  onSend = () => {},
+  onTextChanged = () => { },
+  onInputSizeChanged = () => { },
+  onSend = () => { },
   onAttachmentPress,
 }: ComposerProps) {
   const previousContentSize =
@@ -85,7 +86,7 @@ export default function Composer({
     (
       event: NativeSyntheticEvent<TextInputContentSizeChangeEventData>,
     ) => {
-      const {contentSize} = event.nativeEvent;
+      const { contentSize } = event.nativeEvent;
 
       if (!contentSize) {
         return;
@@ -137,8 +138,8 @@ export default function Composer({
         onPress={onAttachmentPress}
         disabled={!onAttachmentPress}
       >
-        <Image 
-          src={attachmentIcon.toLocaleString()}
+        <Image
+          source={toImageSource(attachmentIcon)}
           style={[
             styles.icon,
             attachmentImageStyle,
@@ -188,7 +189,7 @@ export default function Composer({
         onPress={handleSend}
       >
         <Image
-      
+
           src={emojiIcon.toLocaleString()}
           style={[
             styles.icon,

@@ -101,7 +101,14 @@ const SelectCompanyScreen = () => {
                         </Text>
                     }
                     left={() => (
-                        <IconEmpresasSVG width={56}style={{paddingHorizontal:16}} />
+                        
+                        <IconEmpresasSVG
+  width={56}
+  style={{
+    paddingLeft: 16,
+    paddingRight: 16,
+  }}
+/>
                     )}
                 />
             </Card.Content>

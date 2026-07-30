@@ -68,7 +68,7 @@ export class Category {
   Type 'number' is not assignable to type 'string'.
 
 76       accessoriesImage, */
-      mobilesImage.toLocaleString(),
+      mobilesImage,
     );
   }
 
@@ -77,7 +77,7 @@ export class Category {
       'Accessories',
       CategoryType.ELECTRONICS,
       CategoryCode.ACCESSORIES,
-      accessoriesImage.toLocaleString(),
+      accessoriesImage,
     );
   }
 

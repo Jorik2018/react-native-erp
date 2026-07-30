@@ -5,6 +5,7 @@ import { useState } from 'react';
 import ContraseniaPanel from './ContraseniaPanel';
 import LoginProductScreen from '../screens/LoginProductScreen';
 import bannerMaia from '../assets/bg-auth.png';
+import { toImageSource } from '../utils/imageSource';
 
 export default function LoginScreen() {
 
@@ -30,7 +31,7 @@ export default function LoginScreen() {
       <View style={{ flex: 1 }}>
 
         <Image
-          source={bannerMaia}
+          source={toImageSource(bannerMaia)}
           style={styles.headerImage}
         />
 
