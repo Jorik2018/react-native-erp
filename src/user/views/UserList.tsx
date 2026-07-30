@@ -1,54 +1,150 @@
 import { useContext } from 'react';
+import {
+  Alert,
+  FlatList,
+  Pressable,
+  type ListRenderItem,
+} from 'react-native';
+import {
+  Avatar,
+  ListItem,
+} from '@rneui/themed';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-import { Alert, FlatList } from 'react-native';
-import { ListItem, Avatar, Icon } from '@rneui/themed';
 import UsersContext from '../context/UserContext';
 
-export default (props: any) => {
+type User = {
+  id: string | number;
+  name: string;
+  email: string;
+  avatarUrl?: string;
+};
 
-  const { state, dispatch } = useContext(UsersContext) as any;
+type UserListProps = {
+  navigation: {
+    navigate: (
+      screen: 'UserForm',
+      user?: User,
+    ) => void;
+  };
+};
 
+type UsersState = {
+  users: User[];
+};
 
-  function confirmDeletion(user: any) {
-    Alert.alert('Excluir usuário', 'Deseja excluir o usuário?', [
-      {
-        text: 'Sim',
-        onPress() {
-          dispatch({
-            type: 'deleteUser',
-            payload: user,
-          });
+type UsersAction = {
+  type: 'deleteUser';
+  payload: User;
+};
+
+type UsersContextValue = {
+  state: UsersState;
+  dispatch: (action: UsersAction) => void;
+};
+
+export default function UserList({
+  navigation,
+}: UserListProps) {
+  const { state, dispatch } =
+    useContext(UsersContext) as UsersContextValue;
+
+  const confirmDeletion = (user: User) => {
+    Alert.alert(
+      'Excluir usuário',
+      'Deseja excluir o usuário?',
+      [
+        {
+          text: 'Não',
+          style: 'cancel',
         },
-      },
-      {
-        text: 'Não',
-      },
-    ]);
-  }
-
-  function getUserItem({ item: user }: any) {
-    return (
-      <ListItem key={user.id}
-        bottomDivider
-        onPress={() => props.navigation.navigate('UserForm', user)}
-      >
-        <Avatar source={{ uri: user.avatarUrl }} />
-        <ListItem.Content>
-          <ListItem.Title>{user.name}</ListItem.Title>
-          <ListItem.Subtitle>{user.email}</ListItem.Subtitle>
-        </ListItem.Content>
-        <Icon name="edit" onPress={() => props.navigation.navigate('UserForm', user)} size={25} color="orange" />
-        <Icon name="delete" size={25} color="red" onPress={() => confirmDeletion(user)}/>
-      </ListItem>
+        {
+          text: 'Sim',
+          style: 'destructive',
+          onPress: () => {
+            dispatch({
+              type: 'deleteUser',
+              payload: user,
+            });
+          },
+        },
+      ],
     );
-  }
+  };
+
+  const renderUser: ListRenderItem<User> = ({
+    item: user,
+  }) => (
+    <ListItem
+      bottomDivider
+      onPress={() =>
+        navigation.navigate('UserForm', user)
+      }
+    >
+      <Avatar
+        rounded
+        source={
+          user.avatarUrl
+            ? { uri: user.avatarUrl }
+            : undefined
+        }
+        title={
+          user.avatarUrl
+            ? undefined
+            : user.name.charAt(0).toUpperCase()
+        }
+      />
+
+      <ListItem.Content>
+        <ListItem.Title>
+          {user.name}
+        </ListItem.Title>
+
+        <ListItem.Subtitle>
+          {user.email}
+        </ListItem.Subtitle>
+      </ListItem.Content>
+
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={`Editar ${user.name}`}
+        hitSlop={8}
+        onPress={event => {
+          event.stopPropagation();
+          navigation.navigate('UserForm', user);
+        }}
+      >
+        <MaterialIcons
+          name="edit"
+          size={25}
+          color="orange"
+        />
+      </Pressable>
+
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={`Eliminar ${user.name}`}
+        hitSlop={8}
+        onPress={event => {
+          event.stopPropagation();
+          confirmDeletion(user);
+        }}
+      >
+        <MaterialIcons
+          name="delete"
+          size={25}
+          color="red"
+        />
+      </Pressable>
+    </ListItem>
+  );
 
   return (
     <FlatList
-      keyExtractor={user => user.id.toString()}
       data={state.users}
-      renderItem={getUserItem}
-
+      keyExtractor={user => String(user.id)}
+      renderItem={renderUser}
+      keyboardShouldPersistTaps="handled"
     />
   );
-};
+}

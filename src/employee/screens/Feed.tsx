@@ -1,87 +1,178 @@
-import { useState, useEffect } from 'react'
-import firestore from '@react-native-firebase/firestore'
-import { Card, Header } from '@rneui/themed'
-import Icon from 'react-native-vector-icons/FontAwesome'
-import { View, ScrollView } from 'react-native'
+import { useCallback, useEffect, useState } from 'react';
+import {
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native';
+import firestore from '@react-native-firebase/firestore';
+import { Card, Header } from '@rneui/themed';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-const Feed = ({ navigation }: any) => {
-    const [students, setStudents] = useState([])
+type Student = {
+  id: string;
+  name: string;
+  age: string;
+  school: string;
+  department: string;
+  type: 'student';
+};
 
-    const fetchStudents = async () => {
-        const studentsCollection:any = await firestore().collection('students').get()
-        console.log(studentsCollection.docs)
-        setStudents(
-            studentsCollection.docs.map((doc: any) => {
-                return { ...doc.data(), id: doc.id }
-            })
-        )
+type FeedProps = {
+  navigation: {
+    navigate: (
+      screen: 'Update',
+      params: {
+        studentToUpdate: Student;
+      },
+    ) => void;
+  };
+};
+
+export default function Feed({ navigation }: FeedProps) {
+  const [students, setStudents] = useState<Student[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const deleteStudent = useCallback(async (id: string) => {
+    try {
+      await firestore()
+        .collection('students')
+        .doc(id)
+        .delete();
+    } catch (error) {
+      console.error('Error al eliminar estudiante:', error);
     }
+  }, []);
 
-    const deleteStudent = async (id: any) => {
-        const res = await firestore().collection('students').doc(id).delete()
-        console.log(res)
-        fetchStudents()
-    }
+  useEffect(() => {
+    const unsubscribe = firestore()
+      .collection('students')
+      .where('type', '==', 'student')
+      .onSnapshot(
+        querySnapshot => {
+          const studentList: Student[] =
+            querySnapshot.docs.map(doc => ({
+              id: doc.id,
+              ...(doc.data() as Omit<Student, 'id'>),
+            }));
 
-    useEffect(() => {
-        firestore().collection('students').where("type", "==", "student").onSnapshot(querySnapshot => {
-            querySnapshot.docChanges().forEach(change => {
-                if (change.type == 'added') {
-                    console.log('New student:', change.doc.data())
+          setStudents(studentList);
+          setIsLoading(false);
+        },
+        error => {
+          console.error(
+            'Error al obtener estudiantes:',
+            error,
+          );
+          setIsLoading(false);
+        },
+      );
+
+    return unsubscribe;
+  }, []);
+
+  return (
+    <View style={styles.container}>
+      <Header
+        placement="left"
+        centerComponent={{
+          text: 'STUDENTS',
+          style: styles.headerTitle,
+        }}
+        leftComponent={
+          <MaterialIcons
+            name="people"
+            size={24}
+            color="#fff"
+          />
+        }
+      />
+
+      <ScrollView
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
+        {!isLoading && students.length === 0 && (
+          <Card>
+            <Card.Title>
+              No hay estudiantes registrados
+            </Card.Title>
+          </Card>
+        )}
+
+        {students.map(student => (
+          <Card key={student.id}>
+            <Card.Title style={styles.studentName}>
+              {student.name}
+            </Card.Title>
+
+            <Card.Divider />
+
+            <Card.Title>
+              {student.age} years old,{' '}
+              {student.department} student, studying at{' '}
+              {student.school}
+            </Card.Title>
+
+            <Card.Divider />
+
+            <View style={styles.actions}>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={`Editar a ${student.name}`}
+                hitSlop={8}
+                onPress={() =>
+                  navigation.navigate('Update', {
+                    studentToUpdate: student,
+                  })
                 }
-                if (change.type == 'modified') {
-                    console.log('Modified student:', change.doc.data())
+              >
+                <MaterialIcons
+                  name="edit"
+                  size={22}
+                  color="blue"
+                />
+              </Pressable>
+
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={`Eliminar a ${student.name}`}
+                hitSlop={8}
+                onPress={() =>
+                  deleteStudent(student.id)
                 }
-                if (change.type == 'removed') {
-                    console.log('Removed student:', change.doc.data())
-                }
-                fetchStudents()
-            })
-        })
-    }, [])
-    return (
-        <View>
-            <Header
-                placement='left'
-                centerComponent={{ text: 'STUDENTS', style: { color: '#fff', marginTop: 2 } }}
-                leftComponent={{ icon: 'people', color: '#fff' }}
-            />
-            <ScrollView>
-                {
-                    students.map((student:any) => {
-                        return (
-                            <Card key={student.id}>
-                                <Card.Title style={{ fontSize: 21, color: 'red' }}>{student.name}</Card.Title>
-                                <Card.Divider />
-                                <Card.Title>{student.age} years old {student.department} student, studying
-                                    at {student.school}
-                                </Card.Title>
-                                <Card.Divider />
-                                <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-                                    <Icon
-                                        name='pencil'
-                                        color={'blue'}
-                                        size={20}
-                                        onPress={() => {
-                                            navigation.navigate('Update', {
-                                                studentToUpdate: student
-                                            })
-                                        }}
-                                    />
-                                    <Icon
-                                        name='trash'
-                                        color={'red'}
-                                        size={20}
-                                        onPress={() => { deleteStudent(student.id) }}
-                                    />
-                                </View>
-                            </Card>
-                        )
-                    })
-                }
-            </ScrollView>
-        </View>
-    )
+              >
+                <MaterialIcons
+                  name="delete"
+                  size={22}
+                  color="red"
+                />
+              </Pressable>
+            </View>
+          </Card>
+        ))}
+      </ScrollView>
+    </View>
+  );
 }
 
-export default Feed
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  content: {
+    paddingBottom: 24,
+  },
+  headerTitle: {
+    color: '#fff',
+    marginTop: 2,
+  },
+  studentName: {
+    fontSize: 21,
+    color: 'red',
+  },
+  actions: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+});

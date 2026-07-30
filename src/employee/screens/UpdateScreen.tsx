@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import { View } from 'react-native'
 import { Button, Text, Input } from '@rneui/themed'
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import firestore from '@react-native-firebase/firestore'
 
-const UpdateScreen = ({ navigation, route }:any) => {
+const UpdateScreen = ({ navigation, route }: any) => {
     const { studentToUpdate } = route.params
     const studentId = studentToUpdate.id
-    const [student, setStudent]:[any,any] = useState({
+    const [student, setStudent]: [any, any] = useState({
         name: studentToUpdate.name,
         age: studentToUpdate.age,
         school: studentToUpdate.school,
@@ -24,7 +25,7 @@ const UpdateScreen = ({ navigation, route }:any) => {
         })
     }
 
-    const updateStudent = async (student:any) => {
+    const updateStudent = async (student: any) => {
         try {
             await firestore().collection('students').doc(studentId).update(student)
             resetForm()
@@ -39,27 +40,63 @@ const UpdateScreen = ({ navigation, route }:any) => {
             <Text style={{ textAlign: 'center', marginBottom: 15 }}>Update a student</Text>
             <Input
                 value={student.name}
-                onChangeText={(name: any) => { setStudent({ ...student, name: name }) }}
-                placeholder='Enter name'
-                leftIcon={{ type: 'font-awesome', name: 'header' }}
+                onChangeText={(name: any) => {
+                    setStudent({ ...student, name });
+                }}
+                placeholder="Enter name"
+                leftIcon={
+                    <MaterialIcons
+                        name="person"
+                        size={22}
+                        color="#777"
+                    />
+                }
             />
+
             <Input
                 value={student.age}
-                onChangeText={(age: any) => { setStudent({ ...student, age: age }) }}
-                placeholder='Enter age'
-                leftIcon={{ type: 'font-awesome', name: 'vcard' }}
+                onChangeText={(age: any) => {
+                    setStudent({ ...student, age });
+                }}
+                placeholder="Enter age"
+                keyboardType="numeric"
+                leftIcon={
+                    <MaterialIcons
+                        name="cake"
+                        size={22}
+                        color="#777"
+                    />
+                }
             />
+
             <Input
                 value={student.school}
-                onChangeText={(school: any) => { setStudent({ ...student, school: school }) }}
-                placeholder='Enter school'
-                leftIcon={{ type: 'font-awesome', name: 'building-o' }}
+                onChangeText={(school: any) => {
+                    setStudent({ ...student, school });
+                }}
+                placeholder="Enter school"
+                leftIcon={
+                    <MaterialIcons
+                        name="school"
+                        size={22}
+                        color="#777"
+                    />
+                }
             />
+
             <Input
                 value={student.department}
-                onChangeText={(department: any) => { setStudent({ ...student, department: department }) }}
-                placeholder='Enter department'
-                leftIcon={{ type: 'font-awesome', name: 'desktop' }}
+                onChangeText={(department: any) => {
+                    setStudent({ ...student, department });
+                }}
+                placeholder="Enter department"
+                leftIcon={
+                    <MaterialIcons
+                        name="business"
+                        size={22}
+                        color="#777"
+                    />
+                }
             />
             <Button title='SEND' onPress={() => { updateStudent(student) }} />
         </View>

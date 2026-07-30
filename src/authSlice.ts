@@ -5,6 +5,7 @@ import {
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CryptoJS from 'crypto-js';
+import type { AppDispatch } from './store';
 
 interface AuthState {
   isLoggedIn: boolean;
@@ -85,7 +86,6 @@ export const loginAndSave =
     async (dispatch: any) => {
       try {
         const { token, expirationTime } = payload;
-
         await AsyncStorage.setMany({
           'token': encryptData(token),
           'tokenExpiration': encryptData(expirationTime.toString()),
@@ -115,21 +115,23 @@ export const logoutAndClear =
   };
 
 export const loadTokenFromStorage =
-  () => async (dispatch: any) => {
+  () => async (dispatch: AppDispatch) => {
     dispatch(startAuthLoading());
 
     try {
-      const values =
-        await AsyncStorage.getMany([
-          'token',
-          'tokenExpiration',
-        ]);
+      const values = await AsyncStorage.getMany([
+        'token',
+        'tokenExpiration',
+      ]);
 
-      const encryptedToken =
-        values[0]?.[1];
-
+      const encryptedToken = values.token;
       const encryptedExpiration =
-        values[1]?.[1];
+        values.tokenExpiration;
+
+      console.log('Valores recuperados:', {
+        encryptedToken,
+        encryptedExpiration,
+      });
 
       if (
         !encryptedToken ||
@@ -139,17 +141,16 @@ export const loadTokenFromStorage =
         return;
       }
 
-      const token =
-        decryptData(encryptedToken);
+      const token = decryptData(encryptedToken);
 
-      const expirationText =
-        decryptData(encryptedExpiration);
+      const expirationText = decryptData(
+        encryptedExpiration,
+      );
 
-      const expirationTime =
-        Number(expirationText);
+      const expirationTime = Number(expirationText);
 
       const isValid =
-        token.length > 0 &&
+        token.trim().length > 0 &&
         Number.isFinite(expirationTime) &&
         Date.now() < expirationTime;
 
@@ -176,10 +177,17 @@ export const loadTokenFromStorage =
         error,
       );
 
-      await AsyncStorage.removeMany([
-        'token',
-        'tokenExpiration',
-      ]);
+      try {
+        await AsyncStorage.removeMany([
+          'token',
+          'tokenExpiration',
+        ]);
+      } catch (storageError) {
+        console.error(
+          'Error limpiando AsyncStorage:',
+          storageError,
+        );
+      }
 
       dispatch(logout());
     }

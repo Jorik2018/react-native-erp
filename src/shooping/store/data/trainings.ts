@@ -64,7 +64,11 @@ export class Category {
       'Brand Mobiles',
       CategoryType.ELECTRONICS,
       CategoryCode.MOBILES,
-      mobilesImage,
+      /**src/shooping/store/data/trainings.ts:76:7 - error TS2345: Argument of type 'ImageSourcePropType' is not assignable to parameter of type 'string'.
+  Type 'number' is not assignable to type 'string'.
+
+76       accessoriesImage, */
+      mobilesImage.toLocaleString(),
     );
   }
 
@@ -73,7 +77,7 @@ export class Category {
       'Accessories',
       CategoryType.ELECTRONICS,
       CategoryCode.ACCESSORIES,
-      accessoriesImage,
+      accessoriesImage.toLocaleString(),
     );
   }
 

@@ -1,15 +1,13 @@
 import { View, ScrollView, StyleSheet, Text, TouchableOpacity, FlatList } from 'react-native';
 import { TextInput, Button, Checkbox, Modal, Portal } from 'react-native-paper';
-//import { MaterialIcons as Icon } from 'react-native-vector-icons/material-icons';
 import { useForm, Controller } from 'react-hook-form';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { loginAndSave } from '../authSlice';
-//import { useRouter } from 'expo-router';
 import globalStyles from '../assets/styles/globalStyles';
 import { useNavigation } from '@react-navigation/native';
 import { type AppDispatch } from '../store';
-import { MaterialIcons as Icon} from '@expo/vector-icons';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const ContraseniaPanel = () => {
 
@@ -67,21 +65,65 @@ const ContraseniaPanel = () => {
     };
     return <ScrollView style={styles.scene}>
         <Portal>
-            <Modal visible={showModal} contentContainerStyle={{ alignItems: 'center' }} onDismiss={() => { setShowModal(false) }} >
-                <View style={styles.modalContent}>
-                    <FlatList
-                        data={documentOptions}
-                        keyExtractor={(item) => item.value}
-                        renderItem={({ item }) => (
-                            <TouchableOpacity onPress={() => selectDocumentOnPress(item)} style={{
-                                ...styles.modalItem,
-                                backgroundColor: item.label == selectedDocument ? '#f1f1f1' : 'white'
-                            }}>
-                                <Text style={{ color: (item.label == selectedDocument ? '#000' : '#939393') }}>{item.label}</Text>
+            <Modal
+                visible={showModal}
+                onDismiss={() => setShowModal(false)}
+
+                contentContainerStyle={styles.modalContent}
+            >
+                <Text style={styles.modalTitle}>
+                    Selecciona un documento
+                </Text>
+
+                <FlatList
+                    data={documentOptions}
+                    keyExtractor={item => item.value}
+                    style={styles.documentList}
+                    renderItem={({ item }) => {
+                        const isSelected =
+                            item.value === selectedDocument;
+
+                        return (
+                            <TouchableOpacity
+                                accessibilityRole="button"
+                                onPress={() =>
+                                    selectDocumentOnPress(item)
+                                }
+                                style={[
+                                    styles.modalItem,
+                                    isSelected &&
+                                    styles.modalItemSelected,
+                                ]}
+                            >
+                                <Text
+                                    style={[
+                                        styles.modalItemText,
+                                        isSelected &&
+                                        styles.modalItemTextSelected,
+                                    ]}
+                                >
+                                    {item.label}
+                                </Text>
+
+                                {isSelected && (
+                                    <Icon
+                                        name="check"
+                                        size={22}
+                                        color="#a13ea1"
+                                    />
+                                )}
                             </TouchableOpacity>
-                        )}
-                    />
-                </View>
+                        );
+                    }}
+                />
+
+                <Button
+                    mode="text"
+                    onPress={() => setShowModal(false)}
+                    style={styles.closeModalButton}
+                >
+                    Cerrar
+                </Button>
             </Modal>
         </Portal>
         <View style={{ padding: 28, height: 0 }}>
@@ -179,47 +221,81 @@ const ContraseniaPanel = () => {
 
 export default ContraseniaPanel;
 
-/*
-const pickerSelectStyles = StyleSheet.create({
-    inputIOS: {
-        fontSize: 16,
-        paddingVertical: 12,
-        paddingHorizontal: 10,
-        borderWidth: 1,
-        borderColor: 'gray',
-        borderRadius: 4,
-        color: 'black',
-        paddingRight: 30,
-    },
-    inputAndroid: {
-        fontSize: 16,
-        paddingHorizontal: 10,
-        paddingVertical: 8,
-        borderWidth: 0.5,
-        borderColor: 'gray',
-        borderRadius: 8,
-        color: 'black',
-        paddingRight: 30,
-    },
-});
-*/
-
 const styles = StyleSheet.create({
-    modalContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' },
-    modalContent: {
-        backgroundColor: 'white',
-        width: 320
+modalContent: {
+  width: 320,
+  backgroundColor: '#fff',
+  borderRadius: 12,
+  paddingVertical: 8,
+  alignSelf: 'center',
+
+  elevation: 10,
+
+  shadowColor: '#000',
+  shadowOffset: {
+    width: 0,
+    height: 4,
+  },
+  shadowOpacity: 0.3,
+  shadowRadius: 8,
+},
+
+    modalTitle: {
+        marginBottom: 12,
+        fontSize: 18,
+        fontWeight: '700',
+        color: '#222',
     },
-    modalTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 20 },
-    modalItem: { paddingVertical: 20, paddingHorizontal: 16 },
+
+    documentList: {
+        flexGrow: 0,
+        maxHeight: 320,
+    },
+
+    modalItem: {
+        minHeight: 56,
+        paddingVertical: 16,
+        paddingHorizontal: 12,
+        borderBottomWidth:
+            StyleSheet.hairlineWidth,
+        borderBottomColor: '#ddd',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+
+    modalItemSelected: {
+        backgroundColor: '#f4eaf4',
+    },
+
+    modalItemText: {
+        color: '#707070',
+    },
+
+    modalItemTextSelected: {
+        color: '#222',
+        fontWeight: '600',
+    },
+
+    closeModalButton: {
+        marginTop: 12,
+    },
+
+    scene: {
+        flex: 1,
+    },
+
+    formContent: {
+        padding: 28,
+    },
+    modalContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' },
+
     headerImage: {
         width: '100%',
         height: 176,
         resizeMode: 'stretch',
     },
-    scene: {
-        flex: 1,
-    },
+
     container: {
         flexGrow: 1,
         paddingHorizontal: 20,

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { CLIENT_ID, REDIRECT_URL, MSAL_TENANT } from './config';
 import { Alert, Linking, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -134,7 +134,7 @@ export const ApiView = () => {
       });
   }, []);
 
-  const [authState, setAuthState] = useState(defaultAuthState);
+  const [authState ] = useState(defaultAuthState);
 
   const handleAuthorize = useCallback(async () => {
     axios.get(`https://${MSAL_TENANT}.b2clogin.com/${MSAL_TENANT}.onmicrosoft.com/b2c_1_signupsignin1/v2.0/.well-known/openid-configuration`)

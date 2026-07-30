@@ -1,12 +1,10 @@
 // src/screens/LoginScreen.tsx
-import { View, StyleSheet } from 'react-native';
-/**Cannot find module 'react-native-tab-view' or its corresponding type declarations. */
+import { View, StyleSheet, Image } from 'react-native';
 import { TabView, TabBar } from 'react-native-tab-view';
 import { useState } from 'react';
 import ContraseniaPanel from './ContraseniaPanel';
 import LoginProductScreen from '../screens/LoginProductScreen';
-import { PaperProvider } from 'react-native-paper';
-//import bannerMaia from '../assets/img/baner_maia.png';
+import bannerMaia from '../assets/bg-auth.png';
 
 export default function LoginScreen() {
 
@@ -29,13 +27,12 @@ export default function LoginScreen() {
   };
 
   return (
-    <PaperProvider>
-      <View style={{ flex: 1, backgroundColor: 'white' }}>
+      <View style={{ flex: 1 }}>
 
-        {/*<Image
+        <Image
           source={bannerMaia}
           style={styles.headerImage}
-        />*/}
+        />
 
         <TabView
           navigationState={{ index, routes }}
@@ -51,7 +48,6 @@ export default function LoginScreen() {
           )}
         />
       </View>
-    </PaperProvider>
   );
 }
 
@@ -70,7 +66,8 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   tabBar: {
-    backgroundColor: '#ffffff',
+    backgroundColor: '#a13ea1',
+    color:'#1f1f1f',
   },
   indicator: {
     backgroundColor: '#a13ea1',

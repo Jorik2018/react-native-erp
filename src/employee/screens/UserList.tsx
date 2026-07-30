@@ -1,83 +1,146 @@
 import { useContext } from 'react';
+import {
+  Alert,
+  FlatList,
+  type ListRenderItem,
+} from 'react-native';
+import {
+  Avatar,
+  Button,
+  ListItem,
+} from '@rneui/themed';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import UsersContext from '../context/UserContext';
 
+type User = {
+  id: string | number;
+  name: string;
+  email: string;
+  avatarUrl?: string;
+};
 
-import { Alert, FlatList} from 'react-native'
-import { ListItem, Avatar, Button, Icon} from '@rneui/themed';
+type UserListProps = {
+  navigation: {
+    navigate: (
+      screen: 'UserForm',
+      user?: User,
+    ) => void;
+  };
+};
 
-import UsersContext from '../context/UserContext'
+type UsersState = {
+  users: User[];
+};
 
+type DeleteUserAction = {
+  type: 'deleteUser';
+  payload: User;
+};
 
-// import { Container } from './styles';
+type UsersContextValue = {
+  state: UsersState;
+  dispatch: (action: DeleteUserAction) => void;
+};
 
-export default (props:any) =>{
+export default function UserList({
+  navigation,
+}: UserListProps) {
+  const { state, dispatch } =
+    useContext(UsersContext) as UsersContextValue;
 
-  const {state, dispatch}:any = useContext(UsersContext)
+  const confirmDeletion = (user: User) => {
+    Alert.alert(
+      'Excluir usuário',
+      'Deseja excluir o usuário?',
+      [
+        {
+          text: 'Não',
+          style: 'cancel',
+        },
+        {
+          text: 'Sim',
+          style: 'destructive',
+          onPress: () => {
+            dispatch({
+              type: 'deleteUser',
+              payload: user,
+            });
+          },
+        },
+      ],
+    );
+  };
 
-  function confirmDeletion(user:any){
-    Alert.alert('Excluir usuário', 'Deseja excluir o usuário?', [
-      {
-        text: 'Sim',
-        onPress(){
-          dispatch({
-            type: 'deleteUser',
-            payload: user
-          })
-        }
-      },
-      {
-        text: 'Não'
+  const renderUserItem: ListRenderItem<User> = ({
+    item: user,
+  }) => (
+    <ListItem
+      bottomDivider
+      onPress={() =>
+        navigation.navigate('UserForm', user)
       }
-    ])
+    >
+      <Avatar
+        rounded
+        source={
+          user.avatarUrl
+            ? { uri: user.avatarUrl }
+            : undefined
+        }
+        title={
+          !user.avatarUrl
+            ? user.name.charAt(0).toUpperCase()
+            : undefined
+        }
+      />
 
-  }
+      <ListItem.Content>
+        <ListItem.Title>
+          {user.name}
+        </ListItem.Title>
 
+        <ListItem.Subtitle>
+          {user.email}
+        </ListItem.Subtitle>
+      </ListItem.Content>
 
-   function getUserItem({item: user}:any) {
-     return (
-       
-             <ListItem 
-            
-              key={user.id}
-              bottomDivider
-              onPress={()=> props.navigation.navigate('UserForm', user)}
-             >
-    
-               <Avatar source={{uri: user.avatarUrl}} />
-    
-               <ListItem.Content>
-                 <ListItem.Title>{user.name}</ListItem.Title>
-                 <ListItem.Subtitle>{user.email}</ListItem.Subtitle>
-                
-               </ListItem.Content>
-               <Button
-               onPress={()=> props.navigation.navigate('UserForm', user)}
-               type="clear"
-               
-               icon={<Icon name="edit" size={25} color="orange"/>}/>
-               <Button
-                onPress={()=> confirmDeletion(user)}
-                type="clear"
-                icon={<Icon name="delete" size={25} color="red"/>}/>
-              
-    
-             </ListItem>
-      
-
-
-     )
-   }
-
-
-      return (
-        
-          <FlatList
-          keyExtractor={user => user.id.toString()}
-          data={state.users}
-          renderItem={getUserItem}
-          
+      <Button
+        type="clear"
+        accessibilityLabel={`Editar ${user.name}`}
+        onPress={() =>
+          navigation.navigate('UserForm', user)
+        }
+        icon={
+          <MaterialIcons
+            name="edit"
+            size={25}
+            color="orange"
           />
-        
-      )
+        }
+      />
 
-    
+      <Button
+        type="clear"
+        accessibilityLabel={`Eliminar ${user.name}`}
+        onPress={() => confirmDeletion(user)}
+        icon={
+          <MaterialIcons
+            name="delete"
+            size={25}
+            color="red"
+          />
+        }
+      />
+    </ListItem>
+  );
+
+  return (
+    <FlatList
+      data={state.users}
+      keyExtractor={user =>
+        user.id.toString()
+      }
+      renderItem={renderUserItem}
+    />
+  );
 }

@@ -1,179 +1,222 @@
 import { useCallback, useState } from 'react';
-import { ScrollView, StyleSheet, View, Text } from 'react-native';
-import IconMovistarSVG from '../assets/svg/icons/icon-movistar.svg?react';
-import { Button, Menu, Provider } from 'react-native-paper';
-import CustomSelect from '../home/components/CustomSelect';
-import Footer from '../home/components/Footer';
-import MenuItem from '../home/components/MenuItem';
-import { logoutAndClear } from '../authSlice';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import {
+  Button,
+  Menu,
+} from 'react-native-paper';
+import {
+  useNavigation,
+  type NavigationProp,
+} from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
+
+import IconMovistarSVG from '../assets/svg/icons/icon-header.svg?react';
+
+import CustomSelect from './components/CustomSelect';
+import Footer from './components/Footer';
+import MenuItem from './components/MenuItem';
 import RoundedIconButton from '../components/RoundedIconButton';
-import { useNavigation } from '@react-navigation/native';
 
-const HomeScreen = () => {
+import { logoutAndClear } from '../authSlice';
+import type { AppDispatch } from '../store';
 
-  const navigation: any = useNavigation();
+type HomeStackParamList = {
+  configuration: undefined;
+  'select-company': undefined;
+};
 
-  const [visible, setVisible] = useState(false);
+const selectedProduct = {
+  id: 1,
+  type: 'Línea móvil',
+  numero: '999 999 999',
+  status: 'Activo' as const,
+};
 
-  const dispatch = useDispatch();
+export default function HomeScreen() {
+  const navigation =
+    useNavigation<NavigationProp<HomeStackParamList>>();
 
-  const openMenu = () => setVisible(true);
+  const dispatch = useDispatch<AppDispatch>();
 
-  const closeMenu = () => setVisible(false);
+  const [menuVisible, setMenuVisible] =
+    useState(false);
+
+  const openMenu = useCallback(() => {
+    setMenuVisible(true);
+  }, []);
+
+  const closeMenu = useCallback(() => {
+    setMenuVisible(false);
+  }, []);
 
   const configurationOnPress = useCallback(() => {
     closeMenu();
-    requestAnimationFrame(() => {
-      navigation.push('configuration');
-    });
-  }, [navigation]);
+    navigation.navigate('configuration');
+  }, [closeMenu, navigation]);
 
-const logoutOnPress = useCallback(async () => {
-  try {
-    closeMenu();
-
-    await dispatch(logoutAndClear() as any);
-
-    // No uses navigation.navigate('auth')
-  } catch (error) {
-    console.error('Error cerrando sesión:', error);
-  }
-}, [dispatch]);
-
-  const selectCompanyOnPress = useCallback(async () => {
+  const selectCompanyOnPress = useCallback(() => {
     navigation.navigate('select-company');
   }, [navigation]);
 
+  const logoutOnPress = useCallback(async () => {
+    try {
+      closeMenu();
 
+      await dispatch(logoutAndClear() as any);
+
+      // No uses navigation.navigate('auth')
+    } catch (error) {
+      console.error('Error cerrando sesión:', error);
+    }
+  }, [closeMenu, dispatch]);
 
   return (
-    <Provider>
-      <View style={styles.container}>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <RoundedIconButton
+          onPress={selectCompanyOnPress}
+          iconName="business"
+          iconSize={18}
+          iconColor="#fff"
+          accessibilityLabel="Seleccionar empresa"
+        />
 
-        <View style={styles.header}>
-          <RoundedIconButton
-            onPress={selectCompanyOnPress}
-            iconName="building-o"
-            iconSize={16}
-            iconColor="#fff"
+        <IconMovistarSVG
+          width={100}
+          height={30}
+          aria-label="Movistar"
+        />
+
+        <Menu
+          visible={menuVisible}
+          onDismiss={closeMenu}
+          contentStyle={styles.menuContent}
+          style={styles.menu}
+          anchor={
+            <RoundedIconButton
+              onPress={openMenu}
+              iconName="account-circle"
+              iconSize={18}
+              iconColor="#fff"
+              accessibilityLabel="Abrir menú de usuario"
+            />
+          }
+        >
+          <MenuItem
+            icon="settings"
+            title="Configuración"
+            onPress={configurationOnPress}
           />
-          <IconMovistarSVG height={30} />
-          <Menu
-            visible={visible}
-            onDismiss={closeMenu}
-            contentStyle={{ backgroundColor: '#f9f9f9' }}
-            anchor={
-              <RoundedIconButton
-                onPress={openMenu}
-                iconName="user-o"
-                iconSize={16}
-                iconColor="#fff"
-              />
-            }
-            style={styles.menu}
-          >
-            <MenuItem icon="cog" onPress={configurationOnPress} title="Configuración" />
-            <MenuItem icon="logout" onPress={logoutOnPress} title="Cerrar Sesión" />
-          </Menu>
-        </View>
-        <View style={styles.productSelector}>
-          <CustomSelect legalName={'jjjj'} productSelect={{}} />
-        </View>
-        <ScrollView contentContainerStyle={styles.content}>
-          <View style={styles.section}>
-            <Text>Mi Recibo</Text>
-          </View>
-          <View style={styles.section}>
-            <Text>Saldos</Text>
-          </View>
-          <View style={styles.section}>
-            <Text>Mis Solicitudes</Text>
-          </View>
 
-          <Button
-            mode="contained"
-            onPress={() => {
-              console.log('BOTÓN DIRECTO');
-              navigation.navigate('configuration');
-            }}
-          >
-            Abrir configuración
-          </Button>
-        </ScrollView>
-        <Footer />
+          <MenuItem
+            icon="logout"
+            title="Cerrar sesión"
+            onPress={logoutOnPress}
+          />
+        </Menu>
       </View>
-    </Provider>
+
+      <View style={styles.productSelector}>
+        <CustomSelect
+          legalName="Mi empresa"
+          productSelect={selectedProduct}
+          onSelect={product => {
+            console.log(
+              'Producto seleccionado:',
+              product,
+            );
+          }}
+        />
+      </View>
+
+      <ScrollView
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>
+            Mi recibo
+          </Text>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>
+            Saldos
+          </Text>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>
+            Mis solicitudes
+          </Text>
+        </View>
+
+        <Button
+          mode="contained"
+          onPress={configurationOnPress}
+        >
+          Abrir configuración
+        </Button>
+      </ScrollView>
+
+      <Footer />
+    </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
+
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#0b2739',
     paddingTop: 12,
     paddingBottom: 10,
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
+    backgroundColor: '#0b2739',
   },
-  logo: {
-    width: 50,
-    height: 50,
-  },
+
   productSelector: {
-    backgroundColor: '#0b2739',
     paddingBottom: 15,
-    borderBottomRightRadius: 10,
-    borderBottomLeftRadius: 8
-  },
-  content: {
-    padding: 10,
-  },
-  section: {
-    marginVertical: 10,
-  },
-  footer: {
-    flexDirection: 'row', // Asegura que los elementos estén alineados horizontalmente
-    justifyContent: 'center', // Centra horizontalmente
-    alignItems: 'center',
-    height: 80,
     backgroundColor: '#0b2739',
+    borderBottomRightRadius: 10,
+    borderBottomLeftRadius: 10,
   },
-  footerImage: {
-    width: 100,
-    height: 50,
+
+  content: {
+    flexGrow: 1,
+    padding: 16,
+    paddingBottom: 24,
   },
-  menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: 56,
-    paddingHorizontal: 10,
+
+  section: {
+    marginBottom: 20,
+    padding: 16,
+    backgroundColor: '#f7f7f7',
+    borderRadius: 10,
   },
-  menuText: {
-    marginLeft: 10,
-    fontSize: 14,
-    color: '#000',
+
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#222',
   },
-  containerPopup: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-  },
-  anchorView: {
-    paddingTop: 0,
-    marginBottom: 10,
-  },
+
   menu: {
-    marginTop: 42, // Adjust the position manually if necessary
+    marginTop: 42,
     alignSelf: 'flex-end',
   },
 
+  menuContent: {
+    backgroundColor: '#f9f9f9',
+  },
 });
-
-export default HomeScreen;

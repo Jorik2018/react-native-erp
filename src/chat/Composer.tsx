@@ -138,7 +138,7 @@ export default function Composer({
         disabled={!onAttachmentPress}
       >
         <Image 
-          src={attachmentIcon}
+          src={attachmentIcon.toLocaleString()}
           style={[
             styles.icon,
             attachmentImageStyle,
@@ -189,7 +189,7 @@ export default function Composer({
       >
         <Image
       
-          src={emojiIcon}
+          src={emojiIcon.toLocaleString()}
           style={[
             styles.icon,
             sendImageStyle,

@@ -1,74 +1,149 @@
-import { useState } from 'react'
-import { View } from 'react-native'
-import { Button, Text, Input, Icon } from '@rneui/themed'
-import firestore from '@react-native-firebase/firestore'
+import { useState } from 'react';
+import { View } from 'react-native';
+import { Button, Input, Text } from '@rneui/themed';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import firestore from '@react-native-firebase/firestore';
 
-const CreateScreen = ({ navigation }: any) => {
-    const [student, setStudent] = useState({
-        name: '',
-        age: '',
-        school: '',
-        department: '',
-        type: 'student'
-    })
+type Student = {
+  name: string;
+  age: string;
+  school: string;
+  department: string;
+  type: 'student';
+};
 
+type CreateScreenProps = {
+  navigation: {
+    navigate: (screen: string) => void;
+  };
+};
 
-    const resetForm = () => {
-        setStudent({
-            name: '',
-            age: '',
-            school: '',
-            department: '',
-            type: 'student'
-        })
+const initialStudent: Student = {
+  name: '',
+  age: '',
+  school: '',
+  department: '',
+  type: 'student',
+};
+
+export default function CreateScreen({
+  navigation,
+}: CreateScreenProps) {
+  const [student, setStudent] =
+    useState<Student>(initialStudent);
+
+  const updateField = (
+    field: keyof Omit<Student, 'type'>,
+    value: string,
+  ) => {
+    setStudent(current => ({
+      ...current,
+      [field]: value,
+    }));
+  };
+
+  const resetForm = () => {
+    setStudent(initialStudent);
+  };
+
+  const createStudent = async () => {
+    try {
+      await firestore()
+        .collection('students')
+        .add(student);
+
+      resetForm();
+      navigation.navigate('Home');
+    } catch (error) {
+      console.error(
+        'Error al crear estudiante:',
+        error,
+      );
     }
+  };
 
+  return (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        paddingHorizontal: 15,
+      }}
+    >
+      <Text
+        style={{
+          textAlign: 'center',
+          marginBottom: 15,
+        }}
+      >
+        Create a student
+      </Text>
 
-    const createStudent = async (student: any) => {
-        try {
-            await firestore().collection('students').add(student)
-            resetForm()
-            navigation.navigate('Home')
-        } catch (error) {
-            console.log(error)
+      <Input
+        value={student.name}
+        onChangeText={value =>
+          updateField('name', value)
         }
-    }
+        placeholder="Enter name"
+        leftIcon={
+          <MaterialIcons
+            name="person"
+            size={22}
+            color="#777"
+          />
+        }
+      />
 
-    return (
-        <View style={{ flex: 1, justifyContent: 'center', paddingHorizontal: 15 }}>
-            <Text style={{ textAlign: 'center', marginBottom: 15 }}>Create a student</Text>
-            <Input
-                value={student.name}
-                onChangeText={(name: any) => { setStudent({ ...student, name: name }) }}
-                placeholder='Enter name'
-                leftIcon={
-                    <Icon
-                        type="font-awesome"
-                        name="header"
-                    />
-                }
-            />
-            <Input
-                value={student.age}
-                onChangeText={(age: any) => { setStudent({ ...student, age: age }) }}
-                placeholder='Enter age'
-                leftIcon={{ type: 'font-awesome', name: 'vcard' }}
-            />
-            <Input
-                value={student.school}
-                onChangeText={(school: any) => { setStudent({ ...student, school: school }) }}
-                placeholder='Enter school'
-                leftIcon={{ type: 'font-awesome', name: 'building-o' }}
-            />
-            <Input
-                value={student.department}
-                onChangeText={(department: any) => { setStudent({ ...student, department: department }) }}
-                placeholder='Enter department'
-                leftIcon={{ type: 'font-awesome', name: 'desktop' }}
-            />
-            <Button title='SEND' onPress={() => { createStudent(student) }} />
-        </View>
-    )
+      <Input
+        value={student.age}
+        onChangeText={value =>
+          updateField('age', value)
+        }
+        placeholder="Enter age"
+        keyboardType="numeric"
+        leftIcon={
+          <MaterialIcons
+            name="cake"
+            size={22}
+            color="#777"
+          />
+        }
+      />
+
+      <Input
+        value={student.school}
+        onChangeText={value =>
+          updateField('school', value)
+        }
+        placeholder="Enter school"
+        leftIcon={
+          <MaterialIcons
+            name="school"
+            size={22}
+            color="#777"
+          />
+        }
+      />
+
+      <Input
+        value={student.department}
+        onChangeText={value =>
+          updateField('department', value)
+        }
+        placeholder="Enter department"
+        leftIcon={
+          <MaterialIcons
+            name="business"
+            size={22}
+            color="#777"
+          />
+        }
+      />
+
+      <Button
+        title="SEND"
+        onPress={createStudent}
+      />
+    </View>
+  );
 }
-
-export default CreateScreen

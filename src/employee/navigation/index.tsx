@@ -1,138 +1,164 @@
-import { FontAwesome } from '@expo/vector-icons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { type ColorSchemeName } from 'react-native';
-//import Colors from '../constants/Colors';
-//import useColorScheme from '../hooks/useColorScheme';
+import type { ComponentProps } from 'react';
+import type { ColorSchemeName } from 'react-native';
+
 import ModalScreen from '../screens/ModalScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
-//import TabOneScreen from '../screens/TabOneScreen';
 import TabTwoScreen from '../screens/TabTwoScreen';
-import type { RootStackParamList, RootTabParamList } from '../types';
 import UserList from '../screens/UserList';
 import UserForm from '../screens/UserForm';
 import EmployeeList from '../screens/EmployeeList';
 
-import { Button, Icon } from '@rneui/base';
+import type {
+  RootStackParamList,
+  RootTabParamList,
+} from '../types';
 
-const screenOptions: any = {
+import {
+  Button,
+} from '@rneui/base';
+
+const screenOptions = {
   headerStyle: {
-    backgroundColor: '#faf'
+    backgroundColor: '#faf',
   },
   headerTintColor: '#fff',
   headerTitleStyle: {
-    fontWeight: 'bold'
-  }
+    fontWeight: 'bold' as const,
+  },
+};
+
+type NavigationProps = {
+  colorScheme: ColorSchemeName;
+};
+
+export default function Navigation({
+  colorScheme: _colorScheme,
+}: NavigationProps) {
+  return <RootNavigator />;
 }
 
-export default function Navigation({  }: { colorScheme: ColorSchemeName }) {
-  return (
-      <RootNavigator />
-
-  );
-}
-
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Stack =
+  createNativeStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
-  return (<Stack.Navigator
-    screenOptions={screenOptions}>
+  return (
+    <Stack.Navigator screenOptions={screenOptions}>
+      <Stack.Screen
+        name="Root"
+        component={BottomTabNavigator}
+        options={{ headerShown: false }}
+      />
 
+      <Stack.Screen
+        name="EmployeeList"
+        component={EmployeeList}
+        options={{
+          title: 'Employees',
+        }}
+      />
 
-    <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
-    <Stack.Screen name="EmployeeList" component={EmployeeList} options={() => {
-        return {
-          title: "Employees"
-        }
-      }}/>
-    
-    <Stack.Screen name="UserList" component={UserList}
-      options={({ navigation }:any) => {
-        return {
-          title: "Lista de Usuários",
+      <Stack.Screen
+        name="UserList"
+        component={UserList}
+        options={({ navigation }) => ({
+          title: 'Lista de Usuários',
           headerRight: () => (
             <Button
-              onPress={() => navigation.navigate("UserForm")}
+              onPress={() =>
+                navigation.navigate('UserForm')
+              }
               type="clear"
-              icon={<Icon name="add" size={30} color="#fff" />} />
-          )
-        }
-      }} />
-    <Stack.Screen name="UserForm" component={UserForm}
-      options={{
-        title: "Formulário de Usuários"
-      }} />
-    <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
-    <Stack.Group screenOptions={{ presentation: 'modal' }}>
-      <Stack.Screen name="Modal" component={ModalScreen} />
-    </Stack.Group>
+              icon={
+                <MaterialIcons
+                  name="add"
+                  size={30}
+                  color="#fff"
+                />
+              }
+            />
+          ),
+        })}
+      />
 
-  </Stack.Navigator>
+      <Stack.Screen
+        name="UserForm"
+        component={UserForm}
+        options={{
+          title: 'Formulário de Usuários',
+        }}
+      />
+
+      <Stack.Screen
+        name="NotFound"
+        component={NotFoundScreen}
+        options={{
+          title: 'Oops!',
+        }}
+      />
+
+      <Stack.Group
+        screenOptions={{
+          presentation: 'modal',
+        }}
+      >
+        <Stack.Screen
+          name="Modal"
+          component={ModalScreen}
+        />
+      </Stack.Group>
+    </Stack.Navigator>
   );
 }
 
-const BottomTab = createBottomTabNavigator<RootTabParamList>();
+const BottomTab =
+  createBottomTabNavigator<RootTabParamList>();
 
 function BottomTabNavigator() {
-  //const colorScheme = useColorScheme();
-
   return (
-    <BottomTab.Navigator
-      initialRouteName="TabOne">
-      {/*<BottomTab.Screen
-        name="TabOne"
-        component={TabOneScreen}
-        options={({ navigation }: RootTabScreenProps<'TabOne'>) => ({
-          title: 'Tab One',
-          tabBarIcon: ({ color }:any) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <>
-            <Pressable
-              onPress={() => navigation.navigate('EmployeeList')}
-              style={({ pressed }) => ({
-                opacity: pressed ? 0.5 : 1,
-              })}>
-              <FontAwesome
-                name="trash"
-                size={25}
-                color={Colors[colorScheme].text}
-                style={{ marginRight: 15 }}
-              />
-            </Pressable>
-            <Pressable
-              onPress={() => navigation.navigate('Modal')}
-              style={({ pressed }) => ({
-                opacity: pressed ? 0.5 : 1,
-              })}>
-              <FontAwesome
-                name="info-circle"
-                size={25}
-                color={Colors[colorScheme].text}
-                style={{ marginRight: 15 }}
-              />
-            </Pressable>
-            </>
-          ),
-        })}
-      />*/}
+    <BottomTab.Navigator initialRouteName="TabOne">
       <BottomTab.Screen
         name="TabTwo"
         component={TabTwoScreen}
         options={{
           title: 'Tab Two',
-          tabBarIcon: ({ color }:any) => <TabBarIcon name="code" color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <TabBarIcon
+              name="code"
+              color={color}
+              size={size}
+            />
+          ),
         }}
       />
     </BottomTab.Navigator>
   );
 }
 
-/**
- * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
- */
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>['name'];
+type MaterialIconName =
+  ComponentProps<typeof MaterialIcons>['name'];
+
+type TabBarIconProps = {
+  name: MaterialIconName;
   color: string;
-}) {
-  return <FontAwesome size={30} style={{ marginBottom: -3 }} {...props} />;
+  size?: number;
+};
+
+function TabBarIcon({
+  name,
+  color,
+  size = 30,
+}: TabBarIconProps) {
+  return (
+    <MaterialIcons
+      name={name}
+      size={size}
+      color={color}
+      style={{
+        marginBottom: -3,
+      }}
+    />
+  );
 }

@@ -24,7 +24,7 @@ export class Product {
     return new Product(
       'Pink Chair',
       'Furniture',
-      product1,
+      product1.toLocaleString(),
       130,
       1,
     );
@@ -44,7 +44,7 @@ export class Product {
     return new Product(
       'Wood Chair',
       'Furniture',
-      product1,
+      product1.toLocaleString(),
       125,
       1,
     );

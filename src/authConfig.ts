@@ -1,4 +1,4 @@
-import { Configuration, PopupRequest } from "@azure/msal-browser";
+import type { Configuration, PopupRequest } from "@azure/msal-browser";
 
 // Config object to be passed to Msal on creation
 export const msalConfig: Configuration = {
@@ -9,7 +9,7 @@ export const msalConfig: Configuration = {
         postLogoutRedirectUri: "/"
     },
     system: {
-        allowNativeBroker: false // Disables WAM Broker
+        //allowNativeBroker: false // Disables WAM Broker
     }
 };
 

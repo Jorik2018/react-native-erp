@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { CLIENT_ID, REDIRECT_URL, MSAL_TENANT } from './config';
 import { Alert, View } from 'react-native';
 
