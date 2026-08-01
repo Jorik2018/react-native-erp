@@ -4,11 +4,11 @@ import {
   StyleSheet,
   View,
   ActivityIndicator,
-  Image,
+  //Image,
   Linking,
   Platform,
 } from 'react-native'
-import MapView, { Polyline, Marker } from 'react-native-maps';
+//import MapView, { Polyline, Marker } from 'react-native-maps';
 import BottomButton from '../../components/BottomButton';
 import { io } from 'socket.io-client'
 import { SOCKET_IO_URL } from '../../config';
@@ -179,7 +179,7 @@ const Driver = (props: any) => {
 
   if (props.pointCoords.length > 1) {
     endMarker = (
-      <Marker
+      {/*<Marker
         coordinate={
           props.pointCoords[props.pointCoords.length - 1]
         }>
@@ -187,13 +187,13 @@ const Driver = (props: any) => {
           style={{ width: 40, height: 40 }}
           source={require('../images/person-marker.png')}
         />
-      </Marker>
+      </Marker>*/}
     );
   }
 
   return (
     <View style={styles.mapStyle}>
-      <MapView
+      {/*<MapView
         ref={(map) => {
           setMap(map);
         }}
@@ -212,7 +212,7 @@ const Driver = (props: any) => {
         />
         {endMarker}
         {startMarker}
-      </MapView>
+      </MapView>*/}
       <BottomButton
         onPressFunction={bottomButtonFunction}
         buttonText={state.buttonText}>

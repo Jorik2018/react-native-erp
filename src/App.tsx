@@ -18,6 +18,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import { AppAuthView } from './AppAuthView';
 import HomeNavigator from './home/App';
+import FoodNavigator from './food/App';
 import LoginScreen from './auth/LoginScreen';
 import { loadTokenFromStorage } from './authSlice';
 
@@ -136,7 +137,10 @@ function App() {
                   name="home"
                   component={HomeNavigator}
                 />
-
+                <RootStack.Screen
+                  name="food"
+                  component={FoodNavigator}
+                />
                 <RootStack.Screen
                   name="users"
                   component={UsersNavigator}

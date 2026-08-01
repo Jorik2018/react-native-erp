@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
   Image,
 } from 'react-native';
-import MapView, { Polyline, Marker } from 'react-native-maps';
+//import MapView, { Polyline, Marker } from 'react-native-maps';
 import apiKey from '../google_api_key';
 import { io } from 'socket.io-client';
 import BottomButton from '../../components/BottomButton';
@@ -79,12 +79,12 @@ const Passenger = (props: any) => {
 
   if (state.driverIsOnTheWar) {
     driverMarker = (
-      <Marker coordinate={state.driverLocation}>
+      {/*<Marker coordinate={state.driverLocation}>
         <Image
           source={require('../images/carIcon.png')}
           style={{ width: 40, height: 40 }}
         />
-      </Marker>
+      </Marker>*/}
     );
   }
 
@@ -100,9 +100,9 @@ const Passenger = (props: any) => {
 
   if (props.pointCoords.length > 1) {
     marker = (
-      <Marker
+      {/*<Marker
         coordinate={props.pointCoords[props.pointCoords.length - 1]}
-      />
+      />*/}
     );
     getDriver = (
       <BottomButton
@@ -135,7 +135,7 @@ const Passenger = (props: any) => {
 
   return (
     <View style={styles.mapStyle}>
-      <MapView
+      {/*<MapView
         ref={(map) => {
           setMap(map);
         }}
@@ -154,7 +154,7 @@ const Passenger = (props: any) => {
         />
         {marker}
         {driverMarker}
-      </MapView>
+      </MapView>*/}
 
       <TextInput
         placeholder="Enter destination..."

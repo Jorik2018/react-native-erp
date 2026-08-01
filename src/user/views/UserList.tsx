@@ -1,6 +1,5 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import {
-  Alert,
   FlatList,
   Pressable,
   type ListRenderItem,
@@ -12,6 +11,7 @@ import {
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import UsersContext from '../context/UserContext';
+import ConfirmDialog from '../../components/ConfirmDialog';
 
 type User = {
   id: string | number;
@@ -46,11 +46,20 @@ type UsersContextValue = {
 export default function UserList({
   navigation,
 }: UserListProps) {
+  const [deleteDialogVisible, setDeleteDialogVisible] =
+    useState(false);
+
+  const [selectedUser, setSelectedUser] =
+    useState<User | null>(null);
+
   const { state, dispatch } =
     useContext(UsersContext) as UsersContextValue;
 
   const confirmDeletion = (user: User) => {
-    Alert.alert(
+  setSelectedUser(user);
+  setDeleteDialogVisible(true);
+
+    /*Alert.alert(
       'Excluir usuário',
       'Deseja excluir o usuário?',
       [
@@ -69,9 +78,21 @@ export default function UserList({
           },
         },
       ],
-    );
+    );*/
   };
+const deleteUser = () => {
+  if (!selectedUser) {
+    return;
+  }
 
+  dispatch({
+    type: 'deleteUser',
+    payload: selectedUser,
+  });
+
+  setDeleteDialogVisible(false);
+  setSelectedUser(null);
+};
   const renderUser: ListRenderItem<User> = ({
     item: user,
   }) => (
@@ -140,11 +161,25 @@ export default function UserList({
   );
 
   return (
+    <>
     <FlatList
       data={state.users}
       keyExtractor={user => String(user.id)}
       renderItem={renderUser}
       keyboardShouldPersistTaps="handled"
     />
+      <ConfirmDialog
+    visible={deleteDialogVisible}
+    title="Excluir usuário"
+    message={`Deseja excluir ${selectedUser?.name}?`}
+    confirmText="Sim"
+    cancelText="Não"
+    onConfirm={deleteUser}
+    onCancel={() => {
+      setDeleteDialogVisible(false);
+      setSelectedUser(null);
+    }}
+  />
+    </>
   );
 }
