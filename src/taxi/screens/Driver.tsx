@@ -8,26 +8,24 @@ import {
   Linking,
   Platform,
 } from 'react-native'
-//import MapView, { Polyline, Marker } from 'react-native-maps';
 import BottomButton from '../../components/BottomButton';
 import { io } from 'socket.io-client'
 import { SOCKET_IO_URL } from '../../config';
+import { MapView } from '../../components/maps';
 //import BackgroundGeolocation from '@mauron85/react-native-background-geolocation';
 
 const Driver = (props: any) => {
 
-  let socket:any = null;
+  let socket: any = null;
 
   const [state, setState] = useState({
     lookingForPassengers: false,
     buttonText: 'FIND PASSENGER'
   } as any);
 
-  const [map, setMap] = useState([] as any);
+  useEffect(() => {
 
-  useEffect(()=>{
-    /*
-    BackgroundGeolocation.configure({
+    /*BackgroundGeolocation.configure({
       desiredAccuracy: BackgroundGeolocation.HIGH_ACCURACY,
       stationaryRadius: 50,
       distanceFilter: 50,
@@ -69,7 +67,7 @@ const Driver = (props: any) => {
         );
       }
     });*/
-  },[]);
+  }, []);
 
   const lookForPassengers = async () => {
     if (state.lookingForPassengers) {
@@ -96,9 +94,9 @@ const Driver = (props: any) => {
       await props.getRouteDirections(
         routeResponse.geocoded_waypoints[0].place_id
       );
-      map.fitToCoordinates(props.pointCoords, {
+      /*map.fitToCoordinates(props.pointCoords, {
         edgePadding: { top: 20, bottom: 20, left: 80, right: 80 }
-      });
+      });*/
       setState({
         ...state,
         buttonText: 'PASSENGER FOUND! PRESS TO ACCEPT',
@@ -112,9 +110,9 @@ const Driver = (props: any) => {
     const passengerLocation = props.pointCoords[
       props.pointCoords.length - 1
     ];
-    // this.setState({
-    //   lookingForPassengers: false,
-    // });
+    setState({
+      lookingForPassengers: false,
+    });
     /*BackgroundGeolocation.checkStatus((status) => {
       console.log(
         '[INFO] BackgroundGeolocation service is running',
@@ -155,8 +153,8 @@ const Driver = (props: any) => {
 
   let endMarker = null;
   let startMarker = null;
-  let findingPassengerActIndicator:any = null;
-  let bottomButtonFunction:any = lookForPassengers;
+  let findingPassengerActIndicator: any = null;
+  let bottomButtonFunction: any = lookForPassengers;
 
   if (props.latitude === null) {
     return null;
@@ -178,8 +176,8 @@ const Driver = (props: any) => {
   }
 
   if (props.pointCoords.length > 1) {
-    endMarker = (
-      {/*<Marker
+    /*endMarker = (
+      <Marker
         coordinate={
           props.pointCoords[props.pointCoords.length - 1]
         }>
@@ -187,17 +185,13 @@ const Driver = (props: any) => {
           style={{ width: 40, height: 40 }}
           source={require('../images/person-marker.png')}
         />
-      </Marker>*/}
-    );
+      </Marker>
+    );*/
   }
 
   return (
     <View style={styles.mapStyle}>
-      {/*<MapView
-        ref={(map) => {
-          setMap(map);
-        }}
-        style={styles.mapStyle}
+      <MapView
         initialRegion={{
           latitude: props.latitude,
           longitude: props.longitude,
@@ -205,14 +199,14 @@ const Driver = (props: any) => {
           longitudeDelta: 0.0121
         }}
         showsUserLocation={true}>
-        <Polyline
+        {[]/*<Polyline
           coordinates={props.pointCoords}
           strokeWidth={2}
           strokeColor="red"
-        />
+        />*/}
         {endMarker}
         {startMarker}
-      </MapView>*/}
+      </MapView>
       <BottomButton
         onPressFunction={bottomButtonFunction}
         buttonText={state.buttonText}>

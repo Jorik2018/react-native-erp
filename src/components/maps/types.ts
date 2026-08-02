@@ -18,7 +18,8 @@ export type MapRegion = LatLng & {
 export type MapMarkerType =
   | 'default'
   | 'destination'
-  | 'car';
+  | 'car'
+  | 'driver';
 
 export type MapMarker = {
   id: string;
@@ -37,12 +38,29 @@ export type MapPolyline = {
   width?: number;
 };
 
+import type {
+  ReactNode,
+} from 'react';
+
 export type AppMapProps = {
   initialRegion: MapRegion;
   region?: MapRegion;
   zoom?: number;
   markers?: MapMarker[];
   polylines?: MapPolyline[];
+  fitCoordinates?: LatLng[];
+  fitPadding?: MapEdgePadding;
+  showsUserLocation?: boolean;
+  userLocation?: LatLng | null;
   style?: StyleProp<ViewStyle>;
+  children?: ReactNode;
   onMarkerPress?: (marker: MapMarker) => void;
 };
+
+export type MapEdgePadding = {
+  top: number;
+  right: number;
+  bottom: number;
+  left: number;
+};
+

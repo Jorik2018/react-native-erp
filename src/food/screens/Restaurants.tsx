@@ -10,7 +10,7 @@ import {
     Image,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { icons, COLORS, FONTS, SIZES } from '../constants';
+import {  COLORS, FONTS, SIZES } from '../constants';
 
 const Restaurants = ({ route, navigation }: any) => {
 
@@ -18,7 +18,7 @@ const Restaurants = ({ route, navigation }: any) => {
     const [restaurant, setRestaurant] = useState(null) as any;
     const [currentLocation, setCurrentLocation] = useState(null) as any;
     const [orderItems, setOrderItems] = useState([]);
-const insets = useSafeAreaInsets();
+    const insets = useSafeAreaInsets();
     useEffect(() => {
         let { item, currentLocation } = route.params;
         setRestaurant(item);
@@ -26,7 +26,7 @@ const insets = useSafeAreaInsets();
     })
 
     function editOrder(action: any, menuId: any, price: any) {
-        let orderList = orderItems.slice() as  any;
+        let orderList = orderItems.slice() as any;
         let item = orderList.filter((a: any) => a.menuId == menuId) as any;
 
         if (action == "+") {
@@ -59,7 +59,7 @@ const insets = useSafeAreaInsets();
     }
 
     function getOrderQuantity(id: any) {
-        let orderItem = orderItems.filter((item:any) => item.menuId == id)as any;
+        let orderItem = orderItems.filter((item: any) => item.menuId == id) as any;
         if (orderItem.length > 0) {
             return orderItem[0].qty
         } else {
@@ -68,12 +68,12 @@ const insets = useSafeAreaInsets();
     }
 
     function getBasketItemCount() {
-        let itemCount = orderItems.reduce((a:any, b:any) => a + (b.qty || 0), 0);
+        let itemCount = orderItems.reduce((a: any, b: any) => a + (b.qty || 0), 0);
         return itemCount;
     }
 
     function sumOrder() {
-        let total = orderItems.reduce((a:any, b:any) => a + (b.qty * b.price || 0), 0)
+        let total = orderItems.reduce((a: any, b: any) => a + (b.qty * b.price || 0), 0)
         return total.toFixed(2);
     }
 
@@ -92,7 +92,7 @@ const insets = useSafeAreaInsets();
                     }}
                     onPress={() => navigation.goBack()}
                 >
-                    <Image
+                    {/*<Image
                         source={icons.back}
                         resizeMode="contain"
                         style={{
@@ -100,7 +100,7 @@ const insets = useSafeAreaInsets();
                             height: 30,
                             justifyContent: "center"
                         }}
-                    />
+                    />*/}
                 </TouchableOpacity>
 
                 {/* Restaurant Name Section */}
@@ -127,7 +127,7 @@ const insets = useSafeAreaInsets();
                     paddingRight: SIZES.padding * 2,
                     justifyContent: "center"
                 }}>
-                    <Image
+                    {/*<Image
                         source={icons.list}
                         resizeMode="contain"
                         style={{
@@ -135,7 +135,7 @@ const insets = useSafeAreaInsets();
                             height: 30,
                             justifyContent: "center"
                         }}
-                    />
+                    />*/}
                 </TouchableOpacity>
             </View>
         )
@@ -154,7 +154,7 @@ const insets = useSafeAreaInsets();
                 ], { useNativeDriver: false })}
             >
                 {
-                    restaurant?.menu.map((item:any, index:number) => (
+                    restaurant?.menu.map((item: any, index: number) => (
                         <View
                             key={`menu-${index}`}
                             style={{
@@ -233,7 +233,7 @@ const insets = useSafeAreaInsets();
                                 flexDirection: 'row',
                                 marginTop: 10,
                             }}>
-                                <Image
+                                {/*<Image
                                     source={icons.fire}
                                     resizeMode="contain"
                                     style={{
@@ -241,7 +241,7 @@ const insets = useSafeAreaInsets();
                                         height: 20,
                                         marginRight: 10
                                     }}
-                                />
+                                />*/}
                                 <Text style={{ ...FONTS.body3, color: COLORS.darkgray }}>
                                     {item.calories.toFixed(2)} Cal
                                 </Text>
@@ -267,7 +267,7 @@ const insets = useSafeAreaInsets();
                 }}
             >
                 {
-                    restaurant?.menu.map((_item:any, index:any) => {
+                    restaurant?.menu.map((_item: any, index: any) => {
                         /*const _opacity = dotPosition.interpolate({
                             inputRange: [index - 1, index, index + 1],
                             outputRange: [0.3, 1, 0.3],
@@ -335,7 +335,7 @@ const insets = useSafeAreaInsets();
                         <View style={{
                             flexDirection: "row"
                         }}>
-                            <Image
+                            {/*<Image
                                 source={icons.pin}
                                 resizeMode="contain"
                                 style={{
@@ -343,11 +343,11 @@ const insets = useSafeAreaInsets();
                                     height: 20,
                                     tintColor: COLORS.darkgray
                                 }}
-                            />
+                            />*/}
                             <Text style={{ marginLeft: SIZES.padding, ...FONTS.h4 }} >{currentLocation?.streetName}</Text>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
-                            <Image
+                            {/*<Image
                                 source={icons.mastercard}
                                 resizeMode="contain"
                                 style={{
@@ -355,7 +355,7 @@ const insets = useSafeAreaInsets();
                                     height: 20,
                                     tintColor: COLORS.darkgray
                                 }}
-                            />
+                            />*/}
                             <Text style={{ marginLeft: SIZES.padding, ...FONTS.h4 }} >8888</Text>
                         </View>
                     </View>

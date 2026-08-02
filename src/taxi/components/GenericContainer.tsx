@@ -4,7 +4,6 @@ import Geolocation from '@react-native-community/geolocation';
 /**Could not find a declaration file for module '@mapbox/polyline'. '/Users/ealarcop/Projects/nodejs/react/react-native-erp/node_modules/@mapbox/polyline/src/polyline.js' implicitly has an 'any' type.
   Try `npm i --save-dev @types/mapbox__polyline` if it exists or add a new declaration (.d.ts) file containing `declare module '@mapbox/polyline';` */
 import PolyLine from '@mapbox/polyline';
-import apiKey from '../google_api_key';
 
 const genericContainer = (WrappedComponent: any) => {
 
@@ -23,7 +22,7 @@ const genericContainer = (WrappedComponent: any) => {
     const getRouteDirections = async (placeId: any, destinationName: any) => {
       try {
         const response = await fetch(
-          `https://maps.googleapis.com/maps/api/directions/json?origin=${state.latitude},${state.longitude}&destination=place_id:${placeId}&key=${apiKey}`,
+          `https://maps.googleapis.com/maps/api/directions/json?origin=${state.latitude},${state.longitude}&destination=place_id:${placeId}&key=${'apiKey'}`,
         );
         const json = await response.json();
         console.log('json getroutedirection', state.latitude);

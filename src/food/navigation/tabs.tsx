@@ -10,13 +10,14 @@ import Svg, { Path } from 'react-native-svg';
 
 import { COLORS, icons } from "../constants"
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Home } from '../screens';
+import Home from '../screens/Home';
+import { toImageSource } from '../../utils/imageSource';
 
 const Tab = createBottomTabNavigator();
 
 const TabBarCustomButton = ({ accessibilityState, children, onPress }: any) => {
 
-    var isSelected = accessibilityState.selected
+    var isSelected = accessibilityState?.selected
 
     if (isSelected) {
         return (
@@ -117,7 +118,7 @@ const Tabs = () => {
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <Image
-                            source={icons.cutlery}
+                            source={toImageSource(icons.cutlery)}
                             resizeMode="contain"
                             style={{
                                 width: 25,
@@ -140,7 +141,7 @@ const Tabs = () => {
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <Image
-                            source={icons.search}
+                            source={toImageSource(icons.search)}
                             resizeMode="contain"
                             style={{
                                 width: 25,
@@ -163,7 +164,7 @@ const Tabs = () => {
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <Image
-                            source={icons.like}
+                            source={toImageSource(icons.like)}
                             resizeMode="contain"
                             style={{
                                 width: 25,
@@ -186,7 +187,7 @@ const Tabs = () => {
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <Image
-                            source={icons.user}
+                            source={toImageSource(icons.user)}
                             resizeMode="contain"
                             style={{
                                 width: 25,

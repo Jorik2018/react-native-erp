@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
     View,
     Text,
@@ -16,30 +16,16 @@ import {
     type MapRegion,
 } from '../../components/maps';
 //import MapViewDirections from 'react-native-maps-directions';
-import { COLORS, FONTS, icons, SIZES } from "../constants"
+import { COLORS, FONTS, /*icons,*/ SIZES } from "../constants"
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import type { Restaurant, RootStackParamList } from "../navigation/types";
 
-type Courier = {
-    avatar?: string;
-};
 
-type Restaurant = {
-    name?: string;
-    location: LatLng;
-    courier:Courier
-};
-
-type OrderDeliveryProps = {
-    route: {
-        params: {
-            restaurant: Restaurant;
-            currentLocation: {
-                gps: LatLng;
-                streetName: string;
-            };
-        };
-    };
-    navigation: any;
-};
+type OrderDeliveryProps =
+    NativeStackScreenProps<
+        RootStackParamList,
+        'OrderDelivery'
+    >;
 
 const OrderDelivery = ({ route, navigation }: OrderDeliveryProps) => {
 
@@ -96,7 +82,7 @@ const OrderDelivery = ({ route, navigation }: OrderDeliveryProps) => {
                     fromLoc.longitude - toLoc.longitude,
                 ) * 2,
         };
-
+        /** */
         setRestaurant(selectedRestaurant);
         setStreetName(currentLocation.streetName);
         setFromLocation(fromLoc);
@@ -295,11 +281,11 @@ const OrderDelivery = ({ route, navigation }: OrderDeliveryProps) => {
                 <TouchableOpacity
                     onPress={() => navigation.goBack()}
                 >
-                    <Image
+                    {/*<Image
                         source={icons.back}
                         resizeMode="contain"
                         style={styles.headerIcon}
-                    />
+                    />*/}
                 </TouchableOpacity>
 
                 <Text style={styles.headerTitle}>
@@ -309,11 +295,11 @@ const OrderDelivery = ({ route, navigation }: OrderDeliveryProps) => {
                 <TouchableOpacity
                     onPress={makePhoneCall}
                 >
-                    <Image
+                    {/*<Image
                         source={icons.red_pin}
                         resizeMode="contain"
                         style={styles.headerIcon}
-                    />
+                    />*/}
                 </TouchableOpacity>
                 <View style={{ flex: 1 }}>
                     <Text style={{ ...FONTS.body3 }}>{streetName}</Text>
@@ -362,10 +348,10 @@ const OrderDelivery = ({ route, navigation }: OrderDeliveryProps) => {
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                                 <Text style={{ ...FONTS.h4 }}>{restaurant?.courier.name}</Text>
                                 <View style={{ flexDirection: 'row' }}>
-                                    <Image
+                                    {/*<Image
                                         source={icons.star}
                                         style={{ width: 18, height: 18, tintColor: COLORS.primary, marginRight: SIZES.padding }}
-                                    />
+                                    />*/}
                                     <Text style={{ ...FONTS.body3 }}>{restaurant?.rating}</Text>
                                 </View>
                             </View>

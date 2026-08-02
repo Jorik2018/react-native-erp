@@ -68,6 +68,13 @@ const ConfigurationScreen = ({ navigation }: any) => {
             route: 'users',
             screen: 'UserList',
         },
+                {
+            icon: 'account-group',
+            text: 'Food',
+            view: true,
+            route: 'food',
+            screen: 'Home',
+        },
     ];
 
     const handleSelectOption = useCallback(

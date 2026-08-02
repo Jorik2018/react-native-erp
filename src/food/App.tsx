@@ -5,9 +5,11 @@ import {
   OrderDelivery,
   Restaurants
 } from './screens'
+import type { RootStackParamList } from './navigation/types';
 
-const Stack = createNativeStackNavigator();
-
+const Stack =
+  createNativeStackNavigator<RootStackParamList>();
+  
 const App = () => {
 
   return (

@@ -62,7 +62,9 @@ const pwaOptions: Partial<VitePWAOptions> = {
     'favicon.ico',
     'logo.svg',
   ],
-
+  workbox: {
+    maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+  },
   manifest: {
     name: 'vite-rnw',
     short_name: 'vite-rnw',

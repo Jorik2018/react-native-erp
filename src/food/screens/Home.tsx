@@ -16,6 +16,7 @@ import {
     categoryData
 } from '../data/restaurantData'
 import { icons, SIZES, COLORS, FONTS } from '../constants';
+import { toImageSource } from '../../utils/imageSource';
 
 const Home = ({ navigation }: any) => {
 
@@ -50,7 +51,7 @@ const Home = ({ navigation }: any) => {
                     }}
                 >
                     <Image
-                        source={icons.nearby}
+                        source={toImageSource(icons.nearby)}
                         resizeMode="contain"
                         style={{
                             width: 30,
@@ -78,7 +79,7 @@ const Home = ({ navigation }: any) => {
                     justifyContent: "center"
                 }}>
                     <Image
-                        source={icons.location}
+                        source={toImageSource(icons.location)}
                         resizeMode="contain"
                         style={{
                             width: 30,
@@ -196,7 +197,7 @@ const Home = ({ navigation }: any) => {
                         marginTop: SIZES.padding,
                     }}>
                         <Image
-                            source={icons.star}
+                            source={toImageSource(icons.star)}
                             resizeMode="contain"
                             style={{
                                 height: 20,
