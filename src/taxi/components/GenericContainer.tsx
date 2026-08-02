@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Keyboard, PermissionsAndroid, Platform } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
-/**Could not find a declaration file for module '@mapbox/polyline'. '/Users/ealarcop/Projects/nodejs/react/react-native-erp/node_modules/@mapbox/polyline/src/polyline.js' implicitly has an 'any' type.
-  Try `npm i --save-dev @types/mapbox__polyline` if it exists or add a new declaration (.d.ts) file containing `declare module '@mapbox/polyline';` */
 import PolyLine from '@mapbox/polyline';
 
 const genericContainer = (WrappedComponent: any) => {
