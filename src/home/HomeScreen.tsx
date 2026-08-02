@@ -140,6 +140,11 @@ export default function HomeScreen() {
       >
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>
+            UPDATED ON: 2026-08-02
+          </Text>
+        </View>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>
             Mi recibo
           </Text>
         </View>

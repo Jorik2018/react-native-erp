@@ -6,14 +6,13 @@ import { Provider } from "react-redux";
 
 import { DrawerNavigator } from "./routes";
 import store from "./store/store";
-import theme from "./theme.json";
 
 const App = () => {
   return (
     <>
       <IconRegistry icons={EvaIconsPack} />
       <StatusBar barStyle={"dark-content"} />
-      <ApplicationProvider {...eva} theme={{ ...eva.light, ...theme }}>
+      <ApplicationProvider {...eva} theme={{ ...eva.light }}>
         <Provider store={store}>
             <DrawerNavigator />
         </Provider>
