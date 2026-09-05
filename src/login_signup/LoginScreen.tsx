@@ -362,7 +362,7 @@ const styles = StyleSheet.create({
   inputStyle: {
     width: '100%',
     height: 36,
-
+    textAlign: 'center',
     backgroundColor: '#fff7ed',
 
     borderWidth: 2,
