@@ -16,15 +16,19 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useDispatch, useSelector } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
+LoginScreen
 import { AppAuthView } from './AppAuthView';
 import HomeNavigator from './home/App';
 import FoodNavigator from './food/App';
+import LoginScreen2 from './login_signup/LoginScreen';
 import LoginScreen from './auth/LoginScreen';
 import { loadTokenFromStorage } from './authSlice';
 
 import UserForm from './user/views/UserForm';
 import UserList from './user/views/UserList';
 import { UsersProvider } from './user/context/UserContext';
+import PasswordScreen from './login_signup/PasswordScreen';
+const PATH_LOGIN = import.meta.env.VITE_PATH_LOGIN ?? '/login';
 
 
 const RootStack = createNativeStackNavigator();
@@ -33,12 +37,27 @@ const UsersStack = createNativeStackNavigator();
 const linking: LinkingOptions<any> = {
   prefixes: [
     'myapp://',
-    'http://localhost:5173',
+    'http://localhost:7777',
+    'https://web.regionancash.gob.pe'
   ],
 
   config: {
     screens: {
       home: 'home',
+
+      login: {
+        path: PATH_LOGIN.replace(/^\//, ''),
+        parse: {
+          destiny: (value: string) => value,
+        },
+      },
+
+      password: {
+        path: 'password',
+        parse: {
+          destiny: (value: string) => value,
+        },
+      },
 
       users: {
         path: 'users',
@@ -53,7 +72,6 @@ const linking: LinkingOptions<any> = {
     },
   },
 };
-
 function UsersNavigator() {
   return (
     <UsersStack.Navigator initialRouteName="UserList">
@@ -152,10 +170,20 @@ function App() {
                 />
               </>
             ) : (
+              <>
+              <RootStack.Screen
+                name="login"
+                component={LoginScreen2}
+              />
+              <RootStack.Screen
+                name="password"
+                component={PasswordScreen}
+              />
+              
               <RootStack.Screen
                 name="auth"
                 component={LoginScreen}
-              />
+              /></>
             )}
           </RootStack.Navigator>
         </SafeAreaView>
