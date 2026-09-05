@@ -35,6 +35,7 @@ const LoginScreen = ({ navigation, route }: any) => {
     'https://web.regionancash.gob.pe/fs/images/background/SECHIN.jpg',
     'https://web.regionancash.gob.pe/fs/images/background/chavinDeHuantar.jpg',
     'https://web.regionancash.gob.pe/fs/images/background/rio-santa.jpg',
+    'https://web.regionancash.gob.pe/fs/images/background/PLAZA_MAYOR_DE_NUEVO_CHIMBOTE_Y_CATEDRAL.JPG'
   ];
 
   const [backgroundUrl] = useState(
@@ -85,12 +86,12 @@ const LoginScreen = ({ navigation, route }: any) => {
         ? `/${destiny}`
         : '/admin';
 
-      const params = new URLSearchParams({
+      /*const params = new URLSearchParams({
         token: result.token,
-      });
+      });*/
 
       window.location.assign(
-        `${target}?${params.toString()}`
+        `${target}}`
       );
     } catch (error) {
       console.error('Login error:', error);
