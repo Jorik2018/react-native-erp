@@ -19,6 +19,7 @@
     "@react-native-firebase/app": "^25.1.0",
     "@react-native-firebase/auth": "^25.1.0",
     "@react-native-firebase/firestore": "^25.1.0",
+    "@react-native/assets-registry": "^0.87.1",
     "@react-navigation/bottom-tabs": "^7.18.14",
     "@react-navigation/drawer": "^7.13.5",
     "@react-navigation/native": "^7.3.14",
@@ -39,6 +40,7 @@
     "react": "^19.2.7",
     "react-dom": "^19.2.8",
     "react-hook-form": "^7.83.0",
+    "react-native": "^0.87.1",
     "react-native-app-auth": "^8.4.1",
     "react-native-gesture-handler": "^3.1.0",
     "react-native-gifted-chat": "^3.4.0",
@@ -63,6 +65,7 @@
     "uuid": "^14.0.1"
   },
   "devDependencies": {
+    "@rolldown/binding-darwin-arm64": "^1.2.7",
     "@types/crypto-js": "^4.2.2",
     "@types/mapbox__polyline": "^1.0.5",
     "@types/node": "^24.13.2",

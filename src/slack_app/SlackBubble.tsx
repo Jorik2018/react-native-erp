@@ -1,7 +1,7 @@
-import { useActionSheet } from '@expo/react-native-action-sheet';
+//import { useActionSheet } from '@expo/react-native-action-sheet';
 import {
   Text,
-  Clipboard,
+  //Clipboard,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -14,7 +14,7 @@ const { isSameUser, isSameDay } = utils;
 
 export const SlackBubble = (props: any) => {
 
-  const { showActionSheetWithOptions } = useActionSheet();
+  //const { showActionSheetWithOptions } = useActionSheet();
 
   const onLongPress = () => {
     /*if (props.onLongPress) {
@@ -25,14 +25,15 @@ export const SlackBubble = (props: any) => {
         'Copy Text',
         'Cancel',
       ];
-      const cancelButtonIndex = options.length - 1;
-      showActionSheetWithOptions(
+      const _cancelButtonIndex = options.length - 1;
+      console.log(_cancelButtonIndex);
+      /*showActionSheetWithOptions(
         { options, cancelButtonIndex },
-        (buttonIndex) => {
+        (buttonIndex:number) => {
           if (buttonIndex === 0) {
             Clipboard.setString(props.currentMessage.text);
           }
-        });
+        });*/
     }
   }
 

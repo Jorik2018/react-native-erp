@@ -109,6 +109,10 @@ export default defineConfig({
     ],
 
       alias: {
+        '@react-native/assets-registry/registry': path.resolve(
+    __dirname,
+    'src/shims/react-native-assets-registry.ts',
+  ),
         'react-native': 'react-native-web',
 
         'react-native-vector-icons':

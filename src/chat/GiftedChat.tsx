@@ -1,7 +1,7 @@
 import React from 'react';
 import { Animated, Platform, StyleSheet, View } from 'react-native';
 
-import { ActionSheetProvider } from '@expo/react-native-action-sheet';
+//import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import moment from 'moment';
 
 import * as utils from './utils';
@@ -571,7 +571,7 @@ class GiftedChat extends React.Component<
 
   render() {
     if (this.state.isInitialized === true) {
-      return (
+      /*return (
         <ActionSheetProvider ref={this._actionSheetRef}>
           <View
             style={styles.container}
@@ -581,7 +581,7 @@ class GiftedChat extends React.Component<
             {this.renderInputToolbar()}
           </View>
         </ActionSheetProvider>
-      );
+      );*/
     }
     return (
       <View style={styles.container} onLayout={this.onInitialLayoutViewLayout}>

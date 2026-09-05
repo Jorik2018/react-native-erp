@@ -7,9 +7,9 @@ import {
   TouchableOpacity,
   View,
   type ImageStyle,
-  type NativeSyntheticEvent,
+  //type NativeSyntheticEvent,
   type StyleProp,
-  type TextInputContentSizeChangeEventData,
+  //type TextInputContentSizeChangeEventData,
   type TextInputProps,
   type TextStyle,
   type ViewStyle,
@@ -84,7 +84,7 @@ export default function Composer({
 
   const handleContentSizeChange = useCallback(
     (
-      event: NativeSyntheticEvent<TextInputContentSizeChangeEventData>,
+      event: any//NativeSyntheticEvent<TextInputContentSizeChangeEventData>,
     ) => {
       const { contentSize } = event.nativeEvent;
 

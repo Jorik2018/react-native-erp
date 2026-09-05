@@ -6,16 +6,16 @@ import {
   View,
   Text,
 } from 'react-native';
-import { useActionSheet } from '@expo/react-native-action-sheet';
-import { alert } from '../utils';
-import Geolocation from '@react-native-community/geolocation';
+//import { useActionSheet } from '@expo/react-native-action-sheet';
+//import { alert } from '../utils';
+//import Geolocation from '@react-native-community/geolocation';
 import { Camera, useCameraDevice } from 'react-native-vision-camera';
 import { Button } from '../components';
 //import { documentDirectory, moveAsync } from 'expo-file-system';
 
 export const CustomActions = (props:any) => {
 
-  const { showActionSheetWithOptions } = useActionSheet();
+  //const { showActionSheetWithOptions } = useActionSheet();
 
   const device:any = useCameraDevice('back')
   
@@ -41,8 +41,9 @@ export const CustomActions = (props:any) => {
 
   const onActionsPress = () => {
     const options = ['Choose From Library', 'Send Location', 'Cancel'];
-    const cancelButtonIndex = options.length - 1;
-    showActionSheetWithOptions({
+    const _cancelButtonIndex = options.length - 1;
+    console.log(_cancelButtonIndex);
+    /*showActionSheetWithOptions({
       options,
       cancelButtonIndex,
     },
@@ -67,7 +68,7 @@ export const CustomActions = (props:any) => {
             break;
           default:
         }
-      });
+      });*/
   }
 
   let _images:any = [];

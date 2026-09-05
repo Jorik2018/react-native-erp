@@ -190,13 +190,12 @@ const ContraseniaPanel = () => {
             </View>
             <View style={{ maxWidth: 276, width: 276, minWidth: 0, alignSelf: 'center' }}>
                 <Button
-                    mode="contained"
-                    onPress={handleSubmit(onSubmit)}
-                    disabled={!watch('document') || !watch('password')}
-
-                >
-                    INGRESAR
-                </Button>
+  mode="contained"
+  onPress={() => handleSubmit(onSubmit)()}
+  disabled={!watch('document') || !watch('password')}
+>
+  INGRESAR
+</Button>
 
                 <Button
                     mode="outlined"

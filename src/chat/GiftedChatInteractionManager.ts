@@ -1,11 +1,12 @@
-import { InteractionManager } from 'react-native';
+//import { InteractionManager } from 'react-native';
 
 export default {
-  ...InteractionManager,
+  ...{},//InteractionManager,
   runAfterInteractions: (f:any) => {
+    console.log(f);
     // ensure f get called, timeout at 500ms
     // @gre workaround https://github.com/facebook/react-native/issues/8624
-    let called = false;
+    /*let called = false;
     const timeout = setTimeout(() => {
       called = true;
       f();
@@ -14,6 +15,6 @@ export default {
       if (called) return;
       clearTimeout(timeout);
       f();
-    });
+    });*/
   },
 };
