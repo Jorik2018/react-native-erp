@@ -31,35 +31,59 @@ pipeline {
                     )
 
                     echo.
-                    echo Selecting Node %NODE_VERSION%...
+                    echo ===== Selecting Node %NODE_VERSION% =====
                     call nodist %NODE_VERSION%
 
                     if errorlevel 1 (
-                        echo ERROR: Node %NODE_VERSION% is not installed
+                        echo ERROR: Could not activate Node %NODE_VERSION%
                         exit /b 1
                     )
 
                     echo.
                     echo ===== Node =====
+                    where node
                     node --version
 
                     echo.
-                    echo ===== Corepack =====
-                    where corepack
+                    echo ===== NPM =====
+                    where npm
+                    call npm --version
+                '''
+            }
+        }
 
-                    echo.
-                    echo Enabling pnpm %PNPM_VERSION%...
-                    call corepack enable
-                    call corepack prepare pnpm@%PNPM_VERSION% --activate
+        stage('Setup PNPM') {
+            steps {
+                bat '''
+                    @echo off
+
+                    echo ===== PNPM =====
+                    where pnpm >nul 2>&1
 
                     if errorlevel 1 (
-                        echo ERROR: Could not activate pnpm
-                        exit /b 1
+                        echo pnpm not found.
+                        echo Installing pnpm %PNPM_VERSION%...
+
+                        call npm install -g pnpm@%PNPM_VERSION%
+
+                        if errorlevel 1 (
+                            echo ERROR: Could not install pnpm
+                            exit /b 1
+                        )
                     )
 
                     echo.
-                    echo ===== PNPM =====
+                    echo ===== PNPM LOCATION =====
+                    where pnpm
+
+                    echo.
+                    echo ===== PNPM VERSION =====
                     call pnpm --version
+
+                    if errorlevel 1 (
+                        echo ERROR: pnpm is not working
+                        exit /b 1
+                    )
                 '''
             }
         }
@@ -71,16 +95,15 @@ pipeline {
 
                     echo ===== Git =====
                     where git
+                    if errorlevel 1 exit /b 1
                     git --version
 
                     echo.
                     echo ===== Node =====
-                    where node
                     node --version
 
                     echo.
                     echo ===== PNPM =====
-                    where pnpm
                     call pnpm --version
 
                     echo.
@@ -95,6 +118,13 @@ pipeline {
                         echo ERROR: pnpm-lock.yaml not found
                         exit /b 1
                     )
+
+                    echo.
+                    echo ===== Validate Node =====
+
+                    node -e "const major=Number(process.versions.node.split('.')[0]); if(major < 22){ console.error('ERROR: Node 22+ required. Current:', process.version); process.exit(1) }"
+
+                    if errorlevel 1 exit /b 1
                 '''
             }
         }
@@ -105,6 +135,7 @@ pipeline {
                     @echo off
 
                     echo ===== Install dependencies =====
+
                     call pnpm install --frozen-lockfile
 
                     if errorlevel 1 (
