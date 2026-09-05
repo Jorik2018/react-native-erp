@@ -190,12 +190,12 @@ const ContraseniaPanel = () => {
             </View>
             <View style={{ maxWidth: 276, width: 276, minWidth: 0, alignSelf: 'center' }}>
                 <Button
-  mode="contained"
-  onPress={() => handleSubmit(onSubmit)()}
-  disabled={!watch('document') || !watch('password')}
->
-  INGRESAR
-</Button>
+                    mode="contained"
+                    onPress={() => handleSubmit(onSubmit)()}
+                    disabled={!watch('document') || !watch('password')}
+                >
+                    INGRESAR
+                </Button>
 
                 <Button
                     mode="outlined"
@@ -221,23 +221,23 @@ const ContraseniaPanel = () => {
 export default ContraseniaPanel;
 
 const styles = StyleSheet.create({
-modalContent: {
-  width: 320,
-  backgroundColor: '#fff',
-  borderRadius: 12,
-  paddingVertical: 8,
-  alignSelf: 'center',
+    modalContent: {
+        width: 320,
+        backgroundColor: '#fff',
+        borderRadius: 12,
+        paddingVertical: 8,
+        alignSelf: 'center',
 
-  elevation: 10,
+        elevation: 10,
 
-  shadowColor: '#000',
-  shadowOffset: {
-    width: 0,
-    height: 4,
-  },
-  shadowOpacity: 0.3,
-  shadowRadius: 8,
-},
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+    },
 
     modalTitle: {
         marginBottom: 12,

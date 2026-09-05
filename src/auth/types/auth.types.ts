@@ -1,7 +1,7 @@
 // src/auth/types/auth.types.ts
 
 export interface LoginRequest {
-  email: string;
+  username: string;
   password: string;
   destiny?: string;
 }

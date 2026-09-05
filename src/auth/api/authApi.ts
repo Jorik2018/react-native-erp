@@ -16,7 +16,7 @@ export async function login(
   const response = await axios.post<LoginResponse>(
     `${API_URL}/auth`,
     {
-      email: request.email,
+      username: request.username,
       password: request.password,
     },
     {

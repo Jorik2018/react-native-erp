@@ -72,7 +72,7 @@ const LoginScreen = ({ navigation, route }: any) => {
 
     try {
       const result = await loginMutation.mutateAsync({
-        email: userEmail.trim(),
+        username: userEmail.trim(),
         password: userPassword,
         destiny,
       });
