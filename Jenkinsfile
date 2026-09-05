@@ -160,7 +160,6 @@ pipeline {
             }
         }
     }
-
     post {
         success {
             echo 'Auth application deployed successfully.'
