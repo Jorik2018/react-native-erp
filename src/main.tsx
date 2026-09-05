@@ -10,6 +10,15 @@ import fontAwesomeFont from 'react-native-vector-icons/Fonts/FontAwesome.ttf';
 import './index.css';
 import App from './App';
 import { store } from './store';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const iconFonts = `
   @font-face {
@@ -50,9 +59,11 @@ if (!rootElement) {
 
 createRoot(rootElement).render(
 
-    <ReduxProvider store={store}>
-      <PaperProvider>
+  <ReduxProvider store={store}>
+    <PaperProvider>
+      <QueryClientProvider client={queryClient}>
         <App />
-      </PaperProvider>
-    </ReduxProvider>
+      </QueryClientProvider>
+    </PaperProvider>
+  </ReduxProvider>
 );
