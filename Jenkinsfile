@@ -8,23 +8,29 @@ pipeline {
         VITE_PATH_LOGIN = '/login2'
 
         NODE_VERSION = '22'
-        NPM_VERSION  = '10'
         PNPM_VERSION = '9.4.0'
+
+        PNPM_HOME = 'D:\\tools\\pnpm'
+        PATH = "D:\\tools\\pnpm;${env.PATH}"
     }
 
     stages {
+
         stage('Checkout') {
             steps {
                 checkout scm
             }
         }
 
-        stage('Setup Node and NPM') {
+        stage('Setup Node') {
             steps {
                 bat '''
                     @echo off
 
-                    echo ===== Nodist =====
+                    echo ================================
+                    echo ===== Nodist / Node Setup =====
+                    echo ================================
+
                     where nodist
                     if errorlevel 1 (
                         echo ERROR: Nodist not found
@@ -32,7 +38,8 @@ pipeline {
                     )
 
                     echo.
-                    echo ===== Selecting Node %NODE_VERSION% =====
+                    echo Selecting Node %NODE_VERSION%...
+
                     call nodist %NODE_VERSION%
 
                     if errorlevel 1 (
@@ -41,28 +48,16 @@ pipeline {
                     )
 
                     echo.
-                    echo ===== Node =====
+                    echo ===== Node Location =====
                     where node
+
+                    echo.
+                    echo ===== Node Version =====
                     node --version
 
-                    echo.
-                    echo ===== Selecting NPM %NPM_VERSION% =====
-                    call nodist npm %NPM_VERSION%
+                    node -e "const major=Number(process.versions.node.split('.')[0]); if(major < 22){ console.error('ERROR: Node 22+ required. Current:', process.version); process.exit(1) }"
 
-                    if errorlevel 1 (
-                        echo ERROR: Could not activate NPM %NPM_VERSION%
-                        exit /b 1
-                    )
-
-                    echo.
-                    echo ===== NPM =====
-                    where npm
-                    call npm --version
-
-                    if errorlevel 1 (
-                        echo ERROR: npm is not working
-                        exit /b 1
-                    )
+                    if errorlevel 1 exit /b 1
                 '''
             }
         }
@@ -72,28 +67,45 @@ pipeline {
                 bat '''
                     @echo off
 
-                    echo ===== PNPM =====
+                    echo ==========================
+                    echo ===== PNPM Setup =====
+                    echo ==========================
 
-                    where pnpm >nul 2>&1
+                    if not exist "%PNPM_HOME%" (
+                        echo Creating %PNPM_HOME%...
+                        mkdir "%PNPM_HOME%"
+                    )
 
-                    if errorlevel 1 (
+                    if not exist "%PNPM_HOME%\\pnpm.exe" (
+                        echo.
                         echo pnpm not found.
-                        echo Installing pnpm %PNPM_VERSION%...
+                        echo Downloading pnpm %PNPM_VERSION%...
 
-                        call npm install -g pnpm@%PNPM_VERSION%
+                        powershell -NoProfile -ExecutionPolicy Bypass -Command ^
+                          "$ErrorActionPreference = 'Stop'; ^
+                           Invoke-WebRequest ^
+                           -Uri 'https://github.com/pnpm/pnpm/releases/download/v%PNPM_VERSION%/pnpm-win-x64.exe' ^
+                           -OutFile '%PNPM_HOME%\\pnpm.exe'"
 
                         if errorlevel 1 (
-                            echo ERROR: Could not install pnpm
+                            echo ERROR: Could not download pnpm
                             exit /b 1
                         )
+                    ) else (
+                        echo pnpm already installed.
                     )
 
                     echo.
-                    echo ===== PNPM LOCATION =====
+                    echo ===== PNPM Location =====
                     where pnpm
 
+                    if errorlevel 1 (
+                        echo ERROR: pnpm is not available in PATH
+                        exit /b 1
+                    )
+
                     echo.
-                    echo ===== PNPM VERSION =====
+                    echo ===== PNPM Version =====
                     call pnpm --version
 
                     if errorlevel 1 (
@@ -109,20 +121,25 @@ pipeline {
                 bat '''
                     @echo off
 
+                    echo ============================
+                    echo ===== Environment =====
+                    echo ============================
+
+                    echo.
                     echo ===== Git =====
                     where git
-                    if errorlevel 1 exit /b 1
+
+                    if errorlevel 1 (
+                        echo ERROR: Git not found
+                        exit /b 1
+                    )
+
                     git --version
 
                     echo.
                     echo ===== Node =====
                     where node
                     node --version
-
-                    echo.
-                    echo ===== NPM =====
-                    where npm
-                    call npm --version
 
                     echo.
                     echo ===== PNPM =====
@@ -142,12 +159,7 @@ pipeline {
                         exit /b 1
                     )
 
-                    echo.
-                    echo ===== Validate Node =====
-
-                    node -e "const major=Number(process.versions.node.split('.')[0]); if(major < 22){ console.error('ERROR: Node 22+ required. Current:', process.version); process.exit(1) }"
-
-                    if errorlevel 1 exit /b 1
+                    echo Project environment OK
                 '''
             }
         }
@@ -157,7 +169,10 @@ pipeline {
                 bat '''
                     @echo off
 
-                    echo ===== Install dependencies =====
+                    echo ==========================
+                    echo ===== Install =====
+                    echo ==========================
+
                     call pnpm install --frozen-lockfile
 
                     if errorlevel 1 (
@@ -173,7 +188,10 @@ pipeline {
                 bat '''
                     @echo off
 
+                    echo ========================
                     echo ===== Build =====
+                    echo ========================
+
                     echo VITE_PATH_LOGIN=%VITE_PATH_LOGIN%
 
                     call pnpm build
@@ -183,10 +201,15 @@ pipeline {
                         exit /b 1
                     )
 
+                    echo.
+                    echo Verifying build...
+
                     if not exist "%BUILD_DIR%\\index.html" (
                         echo ERROR: %BUILD_DIR%\\index.html not found
                         exit /b 1
                     )
+
+                    echo Build OK
                 '''
             }
         }
@@ -196,10 +219,16 @@ pipeline {
                 bat '''
                     @echo off
 
+                    echo =========================
+                    echo ===== Deploy =====
+                    echo =========================
+
                     if not exist "%DEPLOY_DIR%" (
+                        echo Creating %DEPLOY_DIR%...
                         mkdir "%DEPLOY_DIR%"
                     )
 
+                    echo.
                     echo Cleaning %DEPLOY_DIR%...
 
                     del /F /Q "%DEPLOY_DIR%\\*" 2>nul
@@ -208,7 +237,8 @@ pipeline {
                         rd /S /Q "%%D"
                     )
 
-                    echo Copying %BUILD_DIR%...
+                    echo.
+                    echo Copying %BUILD_DIR% to %DEPLOY_DIR%...
 
                     xcopy "%BUILD_DIR%\\*" "%DEPLOY_DIR%\\" /E /I /Y /Q
 
@@ -217,11 +247,15 @@ pipeline {
                         exit /b 1
                     )
 
+                    echo.
+                    echo Verifying deployment...
+
                     if not exist "%DEPLOY_DIR%\\index.html" (
                         echo ERROR: Deployment verification failed
                         exit /b 1
                     )
 
+                    echo.
                     echo Deploy OK
                 '''
             }
