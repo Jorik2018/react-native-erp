@@ -3,7 +3,7 @@ import { defineConfig ,type Plugin,transformWithEsbuild} from 'vite';
 import react from '@vitejs/plugin-react';
 import svgr from 'vite-plugin-svgr';
 import {
-  VitePWA,
+  //VitePWA,
   type VitePWAOptions,
 } from 'vite-plugin-pwa';
 
@@ -86,13 +86,13 @@ const pwaOptions: Partial<VitePWAOptions> = {
     icons: [],
   },
 };
-
+console.log(pwaOptions);
 export default defineConfig({
   plugins: [
     reactNativeDependenciesJsxPlugin(),
     react(),
     svgr(),
-    VitePWA(pwaOptions),
+    //VitePWA(pwaOptions),
   ],
 
   resolve: {
