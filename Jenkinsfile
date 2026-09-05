@@ -7,7 +7,8 @@ pipeline {
 
         VITE_PATH_LOGIN = '/login2'
 
-        NODE_VERSION = '20'
+        NODE_VERSION = '22'
+        PNPM_VERSION = '9.4.0'
     }
 
     stages {
@@ -31,23 +32,34 @@ pipeline {
 
                     echo.
                     echo Selecting Node %NODE_VERSION%...
-
                     call nodist %NODE_VERSION%
+
                     if errorlevel 1 (
-                        echo ERROR: Could not activate Node %NODE_VERSION%
-                        echo The version may not be installed.
+                        echo ERROR: Node %NODE_VERSION% is not installed
                         exit /b 1
                     )
 
                     echo.
                     echo ===== Node =====
-                    where node
                     node --version
 
                     echo.
-                    echo ===== NPM =====
-                    where npm
-                    call npm --version
+                    echo ===== Corepack =====
+                    where corepack
+
+                    echo.
+                    echo Enabling pnpm %PNPM_VERSION%...
+                    call corepack enable
+                    call corepack prepare pnpm@%PNPM_VERSION% --activate
+
+                    if errorlevel 1 (
+                        echo ERROR: Could not activate pnpm
+                        exit /b 1
+                    )
+
+                    echo.
+                    echo ===== PNPM =====
+                    call pnpm --version
                 '''
             }
         }
@@ -59,8 +71,17 @@ pipeline {
 
                     echo ===== Git =====
                     where git
-                    if errorlevel 1 exit /b 1
                     git --version
+
+                    echo.
+                    echo ===== Node =====
+                    where node
+                    node --version
+
+                    echo.
+                    echo ===== PNPM =====
+                    where pnpm
+                    call pnpm --version
 
                     echo.
                     echo ===== Project =====
@@ -70,17 +91,10 @@ pipeline {
                         exit /b 1
                     )
 
-                    if not exist package-lock.json (
-                        echo ERROR: package-lock.json not found
+                    if not exist pnpm-lock.yaml (
+                        echo ERROR: pnpm-lock.yaml not found
                         exit /b 1
                     )
-
-                    echo.
-                    echo ===== Validate Node version =====
-
-                    node -e "const major=parseInt(process.versions.node.split('.')[0]); if(major < 20){ console.error('ERROR: Node 20 or newer required. Current:', process.version); process.exit(1) }"
-
-                    if errorlevel 1 exit /b 1
                 '''
             }
         }
@@ -91,10 +105,10 @@ pipeline {
                     @echo off
 
                     echo ===== Install dependencies =====
-                    call npm ci
+                    call pnpm install --frozen-lockfile
 
                     if errorlevel 1 (
-                        echo ERROR: npm ci failed
+                        echo ERROR: pnpm install failed
                         exit /b 1
                     )
                 '''
@@ -109,7 +123,7 @@ pipeline {
                     echo ===== Build =====
                     echo VITE_PATH_LOGIN=%VITE_PATH_LOGIN%
 
-                    call npm run build
+                    call pnpm build
 
                     if errorlevel 1 (
                         echo ERROR: Build failed
@@ -160,6 +174,7 @@ pipeline {
             }
         }
     }
+
     post {
         success {
             echo 'Auth application deployed successfully.'
