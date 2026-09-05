@@ -1,18 +1,18 @@
 pipeline {
     agent any
 
-    environment {
-        DEPLOY_DIR = 'D:\\apps\\auth'
-        BUILD_DIR  = 'dist'
+environment {
+    DEPLOY_DIR = 'D:\\apps\\auth'
+    BUILD_DIR  = 'dist'
 
-        VITE_PATH_LOGIN = '/login2'
+    VITE_PATH_LOGIN = '/login2'
 
-        NODE_VERSION = '22'
-        PNPM_VERSION = '9.4.0'
+    NODE_VERSION = '22'
+    PNPM_VERSION = '9.4.0'
 
-        PNPM_HOME = 'D:\\tools\\pnpm'
-        PATH = "D:\\tools\\pnpm;${env.PATH}"
-    }
+    PNPM_HOME = 'D:\\tools\\pnpm'
+    PATH = "D:\\tools\\pnpm;${env.PATH}"
+}
 
     stages {
 
@@ -62,59 +62,55 @@ pipeline {
             }
         }
 
-        stage('Setup PNPM') {
-            steps {
-                bat '''
-                    @echo off
+stage('Setup PNPM') {
+    steps {
+        bat '''
+            @echo off
 
-                    echo ==========================
-                    echo ===== PNPM Setup =====
-                    echo ==========================
+            echo ==========================
+            echo ===== PNPM Setup =====
+            echo ==========================
 
-                    if not exist "%PNPM_HOME%" (
-                        echo Creating %PNPM_HOME%...
-                        mkdir "%PNPM_HOME%"
-                    )
+            if not exist "%PNPM_HOME%" (
+                echo Creating %PNPM_HOME%...
+                mkdir "%PNPM_HOME%"
+            )
 
-                    if not exist "%PNPM_HOME%\\pnpm.exe" (
-                        echo.
-                        echo pnpm not found.
-                        echo Downloading pnpm %PNPM_VERSION%...
+            if not exist "%PNPM_HOME%\\pnpm.exe" (
+                echo.
+                echo pnpm not found.
+                echo Downloading pnpm %PNPM_VERSION%...
 
-                        powershell -NoProfile -ExecutionPolicy Bypass -Command ^
-                          "$ErrorActionPreference = 'Stop'; ^
-                           Invoke-WebRequest ^
-                           -Uri 'https://github.com/pnpm/pnpm/releases/download/v%PNPM_VERSION%/pnpm-win-x64.exe' ^
-                           -OutFile '%PNPM_HOME%\\pnpm.exe'"
+                powershell -NoProfile -ExecutionPolicy Bypass -Command "$ErrorActionPreference='Stop'; Invoke-WebRequest -UseBasicParsing -Uri 'https://github.com/pnpm/pnpm/releases/download/v%PNPM_VERSION%/pnpm-win-x64.exe' -OutFile '%PNPM_HOME%\\pnpm.exe'"
 
-                        if errorlevel 1 (
-                            echo ERROR: Could not download pnpm
-                            exit /b 1
-                        )
-                    ) else (
-                        echo pnpm already installed.
-                    )
+                if errorlevel 1 (
+                    echo ERROR: Could not download pnpm
+                    exit /b 1
+                )
+            ) else (
+                echo pnpm already installed.
+            )
 
-                    echo.
-                    echo ===== PNPM Location =====
-                    where pnpm
+            echo.
+            echo ===== PNPM Location =====
+            where pnpm
 
-                    if errorlevel 1 (
-                        echo ERROR: pnpm is not available in PATH
-                        exit /b 1
-                    )
+            if errorlevel 1 (
+                echo ERROR: pnpm is not available in PATH
+                exit /b 1
+            )
 
-                    echo.
-                    echo ===== PNPM Version =====
-                    call pnpm --version
+            echo.
+            echo ===== PNPM Version =====
+            call pnpm --version
 
-                    if errorlevel 1 (
-                        echo ERROR: pnpm is not working
-                        exit /b 1
-                    )
-                '''
-            }
-        }
+            if errorlevel 1 (
+                echo ERROR: pnpm is not working
+                exit /b 1
+            )
+        '''
+    }
+}
 
         stage('Environment') {
             steps {
