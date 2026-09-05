@@ -5,8 +5,6 @@ environment {
     DEPLOY_DIR = 'D:\\apps\\auth'
     BUILD_DIR  = 'dist'
 
-    VITE_PATH_LOGIN = '/login2'
-
     NODE_VERSION = '22'
     PNPM_VERSION = '9.4.0'
 
