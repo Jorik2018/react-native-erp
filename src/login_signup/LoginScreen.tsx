@@ -92,7 +92,7 @@ const LoginScreen = ({ navigation, route }: any) => {
       });*/
 
       window.location.assign(
-        `${target}}`
+        `${target}`//        `${target}?${params.toString()}`
       );
     } catch (error) {
       console.error('Login error:', error);
