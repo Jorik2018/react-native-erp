@@ -112,53 +112,47 @@ stage('Setup PNPM') {
     }
 }
 
-        stage('Environment') {
-            steps {
-                bat '''
-                    @echo off
+stage('Environment') {
+    steps {
+        bat '''
+            @echo off
 
-                    echo ============================
-                    echo ===== Environment =====
-                    echo ============================
+            echo ============================
+            echo ===== Environment =====
+            echo ============================
 
-                    echo.
-                    echo ===== Git =====
-                    where git
+            echo.
+            echo ===== Git =====
+            where git
+            if errorlevel 1 (
+                echo ERROR: Git not found
+                exit /b 1
+            )
+            git --version
 
-                    if errorlevel 1 (
-                        echo ERROR: Git not found
-                        exit /b 1
-                    )
+            echo.
+            echo ===== Node =====
+            where node
+            node --version
 
-                    git --version
+            echo.
+            echo ===== PNPM =====
+            where pnpm
+            call pnpm --version
 
-                    echo.
-                    echo ===== Node =====
-                    where node
-                    node --version
+            echo.
+            echo ===== Project =====
 
-                    echo.
-                    echo ===== PNPM =====
-                    where pnpm
-                    call pnpm --version
+            if not exist package.json (
+                echo ERROR: package.json not found
+                exit /b 1
+            )
 
-                    echo.
-                    echo ===== Project =====
-
-                    if not exist package.json (
-                        echo ERROR: package.json not found
-                        exit /b 1
-                    )
-
-                    if not exist pnpm-lock.yaml (
-                        echo ERROR: pnpm-lock.yaml not found
-                        exit /b 1
-                    )
-
-                    echo Project environment OK
-                '''
-            }
-        }
+            echo WARNING: Building without pnpm-lock.yaml
+            echo Dependency versions may vary between builds.
+        '''
+    }
+}
 
         stage('Install') {
             steps {
