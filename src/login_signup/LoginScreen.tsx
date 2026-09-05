@@ -53,11 +53,15 @@ const LoginScreen = ({ navigation, route }: any) => {
 
     let valid = true;
 
-    if (!userEmail.trim()) {
+    /*if (!userEmail.trim()) {
       setEmailError('Ingrese su correo electrónico.');
       valid = false;
     } else if (!/\S+@\S+\.\S+/.test(userEmail)) {
       setEmailError('Ingrese un correo electrónico válido.');
+      valid = false;
+    }*/
+    if (!userEmail.trim()) {
+      setEmailError('Ingrese su usuario o correo electrónico.');
       valid = false;
     }
 
