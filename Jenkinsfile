@@ -1,17 +1,54 @@
 pipeline {
     agent any
 
-environment {
-    DEPLOY_DIR = 'D:\\apps\\auth'
-    BUILD_DIR  = 'dist'
+    environment {
+        DEPLOY_DIR = 'D:\\apps\\auth'
+        BUILD_DIR  = 'dist'
 
-    VITE_PATH_LOGIN = '/login2'
-}
+        VITE_PATH_LOGIN = '/login2'
+
+        NODE_VERSION = '20'
+    }
 
     stages {
         stage('Checkout') {
             steps {
                 checkout scm
+            }
+        }
+
+        stage('Setup Node') {
+            steps {
+                bat '''
+                    @echo off
+
+                    echo ===== Nodist =====
+                    where nodist
+                    if errorlevel 1 (
+                        echo ERROR: Nodist not found
+                        exit /b 1
+                    )
+
+                    echo.
+                    echo Selecting Node %NODE_VERSION%...
+
+                    call nodist %NODE_VERSION%
+                    if errorlevel 1 (
+                        echo ERROR: Could not activate Node %NODE_VERSION%
+                        echo The version may not be installed.
+                        exit /b 1
+                    )
+
+                    echo.
+                    echo ===== Node =====
+                    where node
+                    node --version
+
+                    echo.
+                    echo ===== NPM =====
+                    where npm
+                    call npm --version
+                '''
             }
         }
 
@@ -21,27 +58,13 @@ environment {
                     @echo off
 
                     echo ===== Git =====
-                    where git || exit /b 1
+                    where git
+                    if errorlevel 1 exit /b 1
                     git --version
 
                     echo.
-                    echo ===== Node =====
-                    where node || (
-                        echo ERROR: Node.js not found
-                        exit /b 1
-                    )
-                    node --version
-
-                    echo.
-                    echo ===== NPM =====
-                    where npm || (
-                        echo ERROR: npm not found
-                        exit /b 1
-                    )
-                    call npm --version
-
-                    echo.
                     echo ===== Project =====
+
                     if not exist package.json (
                         echo ERROR: package.json not found
                         exit /b 1
@@ -51,6 +74,13 @@ environment {
                         echo ERROR: package-lock.json not found
                         exit /b 1
                     )
+
+                    echo.
+                    echo ===== Validate Node version =====
+
+                    node -e "const major=parseInt(process.versions.node.split('.')[0]); if(major < 20){ console.error('ERROR: Node 20 or newer required. Current:', process.version); process.exit(1) }"
+
+                    if errorlevel 1 exit /b 1
                 '''
             }
         }
@@ -59,8 +89,14 @@ environment {
             steps {
                 bat '''
                     @echo off
+
+                    echo ===== Install dependencies =====
                     call npm ci
-                    if errorlevel 1 exit /b 1
+
+                    if errorlevel 1 (
+                        echo ERROR: npm ci failed
+                        exit /b 1
+                    )
                 '''
             }
         }
@@ -69,8 +105,16 @@ environment {
             steps {
                 bat '''
                     @echo off
+
+                    echo ===== Build =====
+                    echo VITE_PATH_LOGIN=%VITE_PATH_LOGIN%
+
                     call npm run build
-                    if errorlevel 1 exit /b 1
+
+                    if errorlevel 1 (
+                        echo ERROR: Build failed
+                        exit /b 1
+                    )
 
                     if not exist "%BUILD_DIR%\\index.html" (
                         echo ERROR: %BUILD_DIR%\\index.html not found
@@ -101,7 +145,10 @@ environment {
 
                     xcopy "%BUILD_DIR%\\*" "%DEPLOY_DIR%\\" /E /I /Y /Q
 
-                    if errorlevel 1 exit /b 1
+                    if errorlevel 1 (
+                        echo ERROR: Deployment copy failed
+                        exit /b 1
+                    )
 
                     if not exist "%DEPLOY_DIR%\\index.html" (
                         echo ERROR: Deployment verification failed
