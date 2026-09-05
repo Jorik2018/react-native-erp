@@ -154,24 +154,24 @@ stage('Environment') {
     }
 }
 
-        stage('Install') {
-            steps {
-                bat '''
-                    @echo off
+stage('Install') {
+    steps {
+        bat '''
+            @echo off
 
-                    echo ==========================
-                    echo ===== Install =====
-                    echo ==========================
+            echo ==========================
+            echo ===== Install =====
+            echo ==========================
 
-                    call pnpm install --frozen-lockfile
+            call pnpm install --no-frozen-lockfile
 
-                    if errorlevel 1 (
-                        echo ERROR: pnpm install failed
-                        exit /b 1
-                    )
-                '''
-            }
-        }
+            if errorlevel 1 (
+                echo ERROR: pnpm install failed
+                exit /b 1
+            )
+        '''
+    }
+}
 
         stage('Build') {
             steps {
