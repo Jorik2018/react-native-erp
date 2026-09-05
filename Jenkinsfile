@@ -81,7 +81,7 @@ stage('Setup PNPM') {
                 echo pnpm not found.
                 echo Downloading pnpm %PNPM_VERSION%...
 
-                powershell -NoProfile -ExecutionPolicy Bypass -Command "$ErrorActionPreference='Stop'; Invoke-WebRequest -UseBasicParsing -Uri 'https://github.com/pnpm/pnpm/releases/download/v%PNPM_VERSION%/pnpm-win-x64.exe' -OutFile '%PNPM_HOME%\\pnpm.exe'"
+                powershell -NoProfile -ExecutionPolicy Bypass -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; $ErrorActionPreference='Stop'; Invoke-WebRequest -UseBasicParsing -Uri 'https://github.com/pnpm/pnpm/releases/download/v%PNPM_VERSION%/pnpm-win-x64.exe' -OutFile '%PNPM_HOME%\\pnpm.exe'"
 
                 if errorlevel 1 (
                     echo ERROR: Could not download pnpm
