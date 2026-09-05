@@ -12,6 +12,7 @@ environment {
 
     PNPM_HOME = 'D:\\tools\\pnpm'
     PATH = "D:\\tools\\pnpm;${env.PATH}"
+    VITE_API_URL    = 'https://web.regionancash.gob.pe/api'
 }
 
     stages {

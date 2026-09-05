@@ -11,6 +11,7 @@ import {
   Platform,
   ImageBackground,
 } from 'react-native';
+import { useLogin } from '../auth/hooks/useLogin';
 import { Pressable } from 'react-native';
 import Loader from './Components/Loader';
 import Banner from '../assets/image/logo2018.png';
@@ -29,17 +30,23 @@ const LoginScreen = ({ navigation, route }: any) => {
   const [loginError, setLoginError] = useState('');
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
-  const [loading, setLoading] = useState(false);
   const [errortext] = useState('');
-  const [backgroundUrl] = useState(
+  const backgrounds = [
+    'https://web.regionancash.gob.pe/fs/images/background/SECHIN.jpg',
+    'https://web.regionancash.gob.pe/fs/images/background/chavinDeHuantar.jpg',
+    'https://web.regionancash.gob.pe/fs/images/background/rio-santa.jpg',
+  ];
 
-    'https://web.regionancash.gob.pe/fs/images/background/SECHIN.jpg'
+  const [backgroundUrl] = useState(
+    () => backgrounds[Math.floor(Math.random() * backgrounds.length)]
   );
+
+  const loginMutation = useLogin();
+
   const passwordInputRef = createRef<any>();
 
 
   const handleSubmitPress = async () => {
-    // Limpiar errores anteriores
     setEmailError('');
     setPasswordError('');
     setLoginError('');
@@ -59,24 +66,34 @@ const LoginScreen = ({ navigation, route }: any) => {
       valid = false;
     }
 
-    // Errores locales: NO mostramos loader
     if (!valid) {
       return;
     }
 
-    // Simulamos petición al servidor
-    setLoading(true);
-
     try {
-      await new Promise(resolve => setTimeout(resolve, 1800));
+      const result = await loginMutation.mutateAsync({
+        email: userEmail.trim(),
+        password: userPassword,
+        destiny,
+      });
 
-      // Simulación de respuesta incorrecta
-      setLoginError(
-        'El correo electrónico o la contraseña son incorrectos.'
+      const target = destiny
+        ? `/${destiny}`
+        : '/admin';
+
+      const params = new URLSearchParams({
+        token: result.token,
+      });
+
+      window.location.assign(
+        `${target}?${params.toString()}`
       );
+    } catch (error) {
+      console.error('Login error:', error);
 
-    } finally {
-      setLoading(false);
+      setLoginError(
+        'El correo electrónico o la contraseña son incorrectos.',
+      );
     }
   };
 
@@ -86,7 +103,7 @@ const LoginScreen = ({ navigation, route }: any) => {
       resizeMode="cover"
       style={styles.background}
     >
-      <Loader loading={loading} />
+      <Loader loading={loginMutation.isPending} />
 
       <KeyboardAvoidingView
         style={styles.screen}
@@ -187,16 +204,23 @@ const LoginScreen = ({ navigation, route }: any) => {
               )}
 
               <Pressable
-                disabled={loading}
+                disabled={loginMutation.isPending}
                 style={({ pressed }) => [
                   styles.buttonStyle,
-                  pressed && !loading && styles.buttonPressed,
-                  loading && styles.buttonDisabled,
+
+                  pressed &&
+                  !loginMutation.isPending &&
+                  styles.buttonPressed,
+
+                  loginMutation.isPending &&
+                  styles.buttonDisabled,
                 ]}
                 onPress={handleSubmitPress}
               >
                 <Text style={styles.buttonTextStyle}>
-                  {loading ? 'Validando...' : 'Iniciar Sesión'}
+                  {loginMutation.isPending
+                    ? 'Validando...'
+                    : 'Iniciar Sesión'}
                 </Text>
               </Pressable>
               <TouchableOpacity
