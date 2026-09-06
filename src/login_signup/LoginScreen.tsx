@@ -48,7 +48,7 @@ const LoginScreen = ({ navigation, route }: any) => {
 
   const isSubmitDisabled =
   loginMutation.isPending ||
-  (!userEmail.trim() && !userPassword);
+  !(userEmail.trim() && userPassword.length>8);
 
 
   const handleSubmitPress = async () => {
