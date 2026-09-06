@@ -46,6 +46,10 @@ const LoginScreen = ({ navigation, route }: any) => {
 
   const passwordInputRef = createRef<any>();
 
+  const isSubmitDisabled =
+  loginMutation.isPending ||
+  (!userEmail.trim() && !userPassword);
+
 
   const handleSubmitPress = async () => {
     setEmailError('');
@@ -90,7 +94,7 @@ const LoginScreen = ({ navigation, route }: any) => {
       /*const params = new URLSearchParams({
         token: result.token,
       });*/
-
+setUserPassword('');
       window.location.assign(
         `${target}`//        `${target}?${params.toString()}`
       );
@@ -210,16 +214,13 @@ const LoginScreen = ({ navigation, route }: any) => {
               )}
 
               <Pressable
-                disabled={loginMutation.isPending}
+                disabled={loginMutation.isPending||isSubmitDisabled}
                 style={({ pressed }) => [
                   styles.buttonStyle,
 
                   pressed &&
-                  !loginMutation.isPending &&
-                  styles.buttonPressed,
-
-                  loginMutation.isPending &&
-                  styles.buttonDisabled,
+    pressed && !isSubmitDisabled && styles.buttonPressed,
+    isSubmitDisabled && styles.buttonDisabled,
                 ]}
                 onPress={handleSubmitPress}
               >
