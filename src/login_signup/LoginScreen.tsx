@@ -25,9 +25,9 @@ import { toImageSource } from '../utils/imageSource';
 const LoginScreen = ({ navigation, route }: any) => {
   const destiny = route.params?.destiny as any;
 
-  useEffect(() => {
-
-  }, [destiny]);
+useEffect(() => {
+  loadCaptcha();
+}, [destiny]);
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [loginError, setLoginError] = useState('');
@@ -144,7 +144,7 @@ const LoginScreen = ({ navigation, route }: any) => {
     }
   };
 
-  
+
   return (
     <ImageBackground
       source={{ uri: backgroundUrl }}
@@ -239,53 +239,52 @@ const LoginScreen = ({ navigation, route }: any) => {
               )}
 
               <Text style={styles.label}>
-                Código de seguridad:
-              </Text>
+  Código de seguridad:
+</Text>
 
-              <View style={styles.captchaRow}>
+<View style={styles.captchaRow}>
+  <Image
+    source={{ uri: captchaImage }}
+    style={styles.captchaImage}
+    resizeMode="stretch"
+  />
 
-                <Image
-                  source={{ uri: captchaImage }}
-                  style={styles.captchaImage}
-                  resizeMode="stretch"
-                />
+  <TouchableOpacity
+    onPress={loadCaptcha}
+    disabled={captchaLoading}
+    style={styles.captchaReloadButton}
+  >
+    <Text style={styles.captchaReloadText}>
+      ↻
+    </Text>
+  </TouchableOpacity>
 
-                <TextInput
-                  style={[
-                    styles.captchaInput,
-                    captchaError ? styles.inputError : null,
-                  ]}
-                  value={captchaValue}
-                  onChangeText={(value) => {
-                    setCaptchaValue(
-                      value
-                        .toUpperCase()
-                        .replace(/\s/g, '')
-                    );
+  <TextInput
+    style={[
+      styles.inputStyle,
+      styles.captchaInput,
+      captchaError ? styles.inputError : null,
+    ]}
+    value={captchaValue}
+    onChangeText={(value) => {
+      setCaptchaValue(
+        value
+          .toUpperCase()
+          .replace(/\s/g, '')
+      );
 
-                    if (captchaError) {
-                      setCaptchaError('');
-                    }
-                  }}
-                  autoCapitalize="characters"
-                  autoCorrect={false}
-                  maxLength={5}
-                  placeholder="CÓDIGO"
-                  returnKeyType="done"
-                  onSubmitEditing={handleSubmitPress}
-                />
-
-                <TouchableOpacity
-                  onPress={loadCaptcha}
-                  disabled={captchaLoading}
-                  style={styles.captchaReloadButton}
-                >
-                  <Text style={styles.captchaReloadText}>
-                    ↻
-                  </Text>
-                </TouchableOpacity>
-
-              </View>
+      if (captchaError) {
+        setCaptchaError('');
+      }
+    }}
+    autoCapitalize="characters"
+    autoCorrect={false}
+    maxLength={5}
+    placeholder="CÓDIGO"
+    returnKeyType="done"
+    onSubmitEditing={handleSubmitPress}
+  />
+</View>
 
               {captchaError !== '' && (
                 <Text style={styles.fieldError}>
@@ -364,55 +363,56 @@ export default LoginScreen;
 
 const styles = StyleSheet.create({
   captchaRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
-    gap: 10,
-    marginBottom: 15,
-  },
+  flexDirection: 'row',
+  alignItems: 'center',
+  width: '100%',
+  gap: 8,
+  marginBottom: 15,
+},
 
-  captchaImage: {
-    width: 200,
-    height: 60,
-    backgroundColor: '#fff',
-  },
+captchaImage: {
+  width: 170,
+  height: 60,
+  backgroundColor: '#fff',
+  flexShrink: 0,
+},
 
-  captchaInput: {
-    flex: 1,
-    height: 60,
+captchaReloadButton: {
+  width: 42,
+  height: 42,
 
-    borderWidth: 2,
-    borderColor: '#ccc',
-    borderRadius: 5,
+  borderRadius: 26,
 
-    backgroundColor: '#fffaf2',
+  backgroundColor: '#21618c',
 
-    fontSize: 24,
-    fontWeight: '600',
-    textAlign: 'center',
+  justifyContent: 'center',
+  alignItems: 'center',
 
-    paddingHorizontal: 10,
-  },
+  flexShrink: 0,
+},
 
-  captchaReloadButton: {
-    width: 60,
-    height: 60,
+captchaReloadText: {
+  color: '#fff',
+  fontSize: 30,
+  fontWeight: 'bold',
+  lineHeight: 34,
+},
 
-    borderRadius: 30,
+captchaInput: {
+  flex: 1,
+  minWidth: 0,
+  height: 42,
 
-    backgroundColor: '#21618c',
-
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  captchaReloadText: {
-    color: '#fff',
-    fontSize: 32,
-    fontWeight: 'bold',
-  },
-
-
+  borderWidth: 2,
+  borderRadius: 5,
+  fontSize: 22,
+  fontWeight: '600',
+  textAlign: 'center',
+marginHorizontal:0,
+marginBottom:0,
+  paddingHorizontal: 8,
+},
+  
   captchaImageContainer: {
     width: 200,
     height: 70,
@@ -529,7 +529,7 @@ const styles = StyleSheet.create({
 
   inputStyle: {
     width: '100%',
-    height: 36,
+    height: 42,
     textAlign: 'center',
     backgroundColor: '#fff7ed',
 
@@ -541,7 +541,7 @@ const styles = StyleSheet.create({
 
     marginBottom: 12,
 
-    fontSize: 16,
+    fontSize: 18,
     color: '#222',
   },
 
