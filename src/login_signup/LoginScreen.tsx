@@ -280,7 +280,6 @@ useEffect(() => {
     autoCapitalize="characters"
     autoCorrect={false}
     maxLength={5}
-    placeholder="CÓDIGO"
     returnKeyType="done"
     onSubmitEditing={handleSubmitPress}
   />
