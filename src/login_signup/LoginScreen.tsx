@@ -144,6 +144,7 @@ const LoginScreen = ({ navigation, route }: any) => {
     }
   };
 
+  
   return (
     <ImageBackground
       source={{ uri: backgroundUrl }}
@@ -237,25 +238,42 @@ const LoginScreen = ({ navigation, route }: any) => {
                 </Text>
               )}
 
-              {/* CAPTCHA */}
               <Text style={styles.label}>
                 Código de seguridad:
               </Text>
 
               <View style={styles.captchaRow}>
-                <View style={styles.captchaImageContainer}>
-                  {captchaLoading ? (
-                    <Text>Cargando...</Text>
-                  ) : captchaImage ? (
-                    <Image
-                      source={{ uri: captchaImage }}
-                      style={styles.captchaImage}
-                      resizeMode="contain"
-                    />
-                  ) : (
-                    <Text>Captcha no disponible</Text>
-                  )}
-                </View>
+
+                <Image
+                  source={{ uri: captchaImage }}
+                  style={styles.captchaImage}
+                  resizeMode="stretch"
+                />
+
+                <TextInput
+                  style={[
+                    styles.captchaInput,
+                    captchaError ? styles.inputError : null,
+                  ]}
+                  value={captchaValue}
+                  onChangeText={(value) => {
+                    setCaptchaValue(
+                      value
+                        .toUpperCase()
+                        .replace(/\s/g, '')
+                    );
+
+                    if (captchaError) {
+                      setCaptchaError('');
+                    }
+                  }}
+                  autoCapitalize="characters"
+                  autoCorrect={false}
+                  maxLength={5}
+                  placeholder="CÓDIGO"
+                  returnKeyType="done"
+                  onSubmitEditing={handleSubmitPress}
+                />
 
                 <TouchableOpacity
                   onPress={loadCaptcha}
@@ -266,36 +284,14 @@ const LoginScreen = ({ navigation, route }: any) => {
                     ↻
                   </Text>
                 </TouchableOpacity>
+
               </View>
 
-              <TextInput
-                style={[
-                  styles.inputStyle,
-                  captchaError ? styles.inputError : null,
-                ]}
-                value={captchaValue}
-                onChangeText={(value) => {
-                  setCaptchaValue(
-                    value
-                      .toUpperCase()
-                      .replace(/\s/g, '')
-                  );
-
-                  if (captchaError) {
-                    setCaptchaError('');
-                  }
-
-                  if (loginError) {
-                    setLoginError('');
-                  }
-                }}
-                autoCapitalize="characters"
-                autoCorrect={false}
-                maxLength={5}
-                placeholder="Ingrese el código"
-                returnKeyType="done"
-                onSubmitEditing={handleSubmitPress}
-              />
+              {captchaError !== '' && (
+                <Text style={styles.fieldError}>
+                  {captchaError}
+                </Text>
+              )}
 
               {captchaError !== '' && (
                 <Text style={styles.fieldError}>
@@ -370,8 +366,52 @@ const styles = StyleSheet.create({
   captchaRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    width: '100%',
+    gap: 10,
+    marginBottom: 15,
   },
+
+  captchaImage: {
+    width: 200,
+    height: 60,
+    backgroundColor: '#fff',
+  },
+
+  captchaInput: {
+    flex: 1,
+    height: 60,
+
+    borderWidth: 2,
+    borderColor: '#ccc',
+    borderRadius: 5,
+
+    backgroundColor: '#fffaf2',
+
+    fontSize: 24,
+    fontWeight: '600',
+    textAlign: 'center',
+
+    paddingHorizontal: 10,
+  },
+
+  captchaReloadButton: {
+    width: 60,
+    height: 60,
+
+    borderRadius: 30,
+
+    backgroundColor: '#21618c',
+
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  captchaReloadText: {
+    color: '#fff',
+    fontSize: 32,
+    fontWeight: 'bold',
+  },
+
 
   captchaImageContainer: {
     width: 200,
@@ -383,26 +423,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  captchaImage: {
-    width: 200,
-    height: 70,
-  },
 
-  captchaReloadButton: {
-    marginLeft: 10,
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: '#1f4e79',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
 
-  captchaReloadText: {
-    color: '#fff',
-    fontSize: 25,
-    fontWeight: 'bold',
-  },
+
   fieldError: {
     color: '#d51d1d',
     fontSize: 13,
