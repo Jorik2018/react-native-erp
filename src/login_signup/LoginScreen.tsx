@@ -13,7 +13,6 @@ import {
 } from 'react-native';
 import {
   createCaptcha,
-  validateCaptcha,
 } from '../auth/api/captchaApi';
 import { useLogin } from '../auth/hooks/useLogin';
 import { Pressable } from 'react-native';
@@ -82,50 +81,6 @@ const LoginScreen = ({ navigation, route }: any) => {
       );
     } finally {
       setCaptchaLoading(false);
-    }
-  };
-
-  const handleValidateCaptcha = async (): Promise<boolean> => {
-    try {
-      if (!captchaId || !captchaValue.trim()) {
-        setCaptchaError(
-          'Ingrese el código de seguridad.',
-        );
-
-        return false;
-      }
-
-      const result = await validateCaptcha({
-        captchaId,
-        captcha: captchaValue.trim(),
-      });
-
-      if (!result.valid) {
-        setCaptchaError(
-          'El código de seguridad es incorrecto.',
-        );
-
-        await loadCaptcha();
-
-        return false;
-      }
-
-      setCaptchaError('');
-
-      return true;
-    } catch (error) {
-      console.error(
-        'Captcha validation error:',
-        error,
-      );
-
-      setCaptchaError(
-        'No se pudo validar el código de seguridad.',
-      );
-
-      await loadCaptcha();
-
-      return false;
     }
   };
 

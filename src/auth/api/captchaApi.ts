@@ -25,17 +25,3 @@ export async function createCaptcha(): Promise<CaptchaResponse> {
 
   return response.data;
 }
-
-export async function validateCaptcha(
-  request: CaptchaValidationRequest,
-): Promise<CaptchaValidationResponse> {
-  const response = await axios.post<CaptchaValidationResponse>(
-    `${API_URL}/capcha/validate`,
-    {
-      captchaId: request.captchaId,
-      captcha: request.captcha,
-    },
-  );
-
-  return response.data;
-}
