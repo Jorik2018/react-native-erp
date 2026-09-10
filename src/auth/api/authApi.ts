@@ -18,6 +18,8 @@ export async function login(
     {
       username: request.username,
       password: request.password,
+      captchaId: request.captchaId,
+      captcha: request.captcha,
     },
     {
       withCredentials: true,

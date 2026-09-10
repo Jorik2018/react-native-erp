@@ -11,6 +11,10 @@ import {
   Platform,
   ImageBackground,
 } from 'react-native';
+import {
+  createCaptcha,
+  validateCaptcha,
+} from '../auth/api/captchaApi';
 import { useLogin } from '../auth/hooks/useLogin';
 import { Pressable } from 'react-native';
 import Loader from './Components/Loader';
@@ -30,6 +34,11 @@ const LoginScreen = ({ navigation, route }: any) => {
   const [loginError, setLoginError] = useState('');
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
+  const [captchaId, setCaptchaId] = useState('');
+  const [captchaImage, setCaptchaImage] = useState('');
+  const [captchaValue, setCaptchaValue] = useState('');
+  const [captchaError, setCaptchaError] = useState('');
+  const [captchaLoading, setCaptchaLoading] = useState(false);
   const [errortext] = useState('');
   const backgrounds = [
     'https://web.regionancash.gob.pe/fs/images/background/SECHIN.jpg',
@@ -47,31 +56,105 @@ const LoginScreen = ({ navigation, route }: any) => {
   const passwordInputRef = createRef<any>();
 
   const isSubmitDisabled =
-  loginMutation.isPending ||
-  !(userEmail.trim() && userPassword.length>=8);
+    loginMutation.isPending ||
+    captchaLoading ||
+    !(
+      userEmail.trim() &&
+      userPassword.length >= 8 &&
+      captchaValue.trim().length === 5
+    );
 
+  const loadCaptcha = async () => {
+    try {
+      setCaptchaLoading(true);
+      setCaptchaError('');
+
+      const captcha = await createCaptcha();
+
+      setCaptchaId(captcha.captchaId);
+      setCaptchaImage(captcha.image);
+      setCaptchaValue('');
+    } catch (error) {
+      console.error('Captcha load error:', error);
+
+      setCaptchaError(
+        'No se pudo cargar el código de seguridad.',
+      );
+    } finally {
+      setCaptchaLoading(false);
+    }
+  };
+
+  const handleValidateCaptcha = async (): Promise<boolean> => {
+    try {
+      if (!captchaId || !captchaValue.trim()) {
+        setCaptchaError(
+          'Ingrese el código de seguridad.',
+        );
+
+        return false;
+      }
+
+      const result = await validateCaptcha({
+        captchaId,
+        captcha: captchaValue.trim(),
+      });
+
+      if (!result.valid) {
+        setCaptchaError(
+          'El código de seguridad es incorrecto.',
+        );
+
+        await loadCaptcha();
+
+        return false;
+      }
+
+      setCaptchaError('');
+
+      return true;
+    } catch (error) {
+      console.error(
+        'Captcha validation error:',
+        error,
+      );
+
+      setCaptchaError(
+        'No se pudo validar el código de seguridad.',
+      );
+
+      await loadCaptcha();
+
+      return false;
+    }
+  };
 
   const handleSubmitPress = async () => {
     setEmailError('');
     setPasswordError('');
     setLoginError('');
+    setCaptchaError('');
 
     let valid = true;
 
-    /*if (!userEmail.trim()) {
-      setEmailError('Ingrese su correo electrónico.');
-      valid = false;
-    } else if (!/\S+@\S+\.\S+/.test(userEmail)) {
-      setEmailError('Ingrese un correo electrónico válido.');
-      valid = false;
-    }*/
     if (!userEmail.trim()) {
-      setEmailError('Ingrese su usuario o correo electrónico.');
+      setEmailError(
+        'Ingrese su usuario o correo electrónico.',
+      );
       valid = false;
     }
 
     if (!userPassword) {
-      setPasswordError('Ingrese su contraseña.');
+      setPasswordError(
+        'Ingrese su contraseña.',
+      );
+      valid = false;
+    }
+
+    if (!captchaValue.trim()) {
+      setCaptchaError(
+        'Ingrese el código de seguridad.',
+      );
       valid = false;
     }
 
@@ -80,10 +163,11 @@ const LoginScreen = ({ navigation, route }: any) => {
     }
 
     try {
-      //const result =
-       await loginMutation.mutateAsync({
+      await loginMutation.mutateAsync({
         username: userEmail.trim(),
         password: userPassword,
+        captchaId,
+        captcha: captchaValue.trim(),
         destiny,
       });
 
@@ -91,19 +175,17 @@ const LoginScreen = ({ navigation, route }: any) => {
         ? `/${destiny}`
         : '/admin';
 
-      /*const params = new URLSearchParams({
-        token: result.token,
-      });*/
-setUserPassword('');
-      window.location.assign(
-        `${target}`//        `${target}?${params.toString()}`
-      );
+      setUserPassword('');
+
+      window.location.assign(target);
     } catch (error) {
       console.error('Login error:', error);
 
       setLoginError(
         'El correo electrónico o la contraseña son incorrectos.',
       );
+
+      await loadCaptcha();
     }
   };
 
@@ -199,6 +281,73 @@ setUserPassword('');
                   {passwordError}
                 </Text>
               )}
+
+              {/* CAPTCHA */}
+              <Text style={styles.label}>
+                Código de seguridad:
+              </Text>
+
+              <View style={styles.captchaRow}>
+                <View style={styles.captchaImageContainer}>
+                  {captchaLoading ? (
+                    <Text>Cargando...</Text>
+                  ) : captchaImage ? (
+                    <Image
+                      source={{ uri: captchaImage }}
+                      style={styles.captchaImage}
+                      resizeMode="contain"
+                    />
+                  ) : (
+                    <Text>Captcha no disponible</Text>
+                  )}
+                </View>
+
+                <TouchableOpacity
+                  onPress={loadCaptcha}
+                  disabled={captchaLoading}
+                  style={styles.captchaReloadButton}
+                >
+                  <Text style={styles.captchaReloadText}>
+                    ↻
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              <TextInput
+                style={[
+                  styles.inputStyle,
+                  captchaError ? styles.inputError : null,
+                ]}
+                value={captchaValue}
+                onChangeText={(value) => {
+                  setCaptchaValue(
+                    value
+                      .toUpperCase()
+                      .replace(/\s/g, '')
+                  );
+
+                  if (captchaError) {
+                    setCaptchaError('');
+                  }
+
+                  if (loginError) {
+                    setLoginError('');
+                  }
+                }}
+                autoCapitalize="characters"
+                autoCorrect={false}
+                maxLength={5}
+                placeholder="Ingrese el código"
+                returnKeyType="done"
+                onSubmitEditing={handleSubmitPress}
+              />
+
+              {captchaError !== '' && (
+                <Text style={styles.fieldError}>
+                  {captchaError}
+                </Text>
+              )}
+
               {errortext !== '' && (
                 <Text style={styles.errorTextStyle}>
                   {errortext}
@@ -214,13 +363,11 @@ setUserPassword('');
               )}
 
               <Pressable
-                disabled={loginMutation.isPending||isSubmitDisabled}
+                disabled={loginMutation.isPending || isSubmitDisabled}
                 style={({ pressed }) => [
                   styles.buttonStyle,
-
-                  pressed &&
-    pressed && !isSubmitDisabled && styles.buttonPressed,
-    isSubmitDisabled && styles.buttonDisabled,
+                  pressed && !isSubmitDisabled && styles.buttonPressed,
+                  isSubmitDisabled && styles.buttonDisabled,
                 ]}
                 onPress={handleSubmitPress}
               >
@@ -265,6 +412,42 @@ setUserPassword('');
 export default LoginScreen;
 
 const styles = StyleSheet.create({
+  captchaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+
+  captchaImageContainer: {
+    width: 200,
+    height: 70,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  captchaImage: {
+    width: 200,
+    height: 70,
+  },
+
+  captchaReloadButton: {
+    marginLeft: 10,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#1f4e79',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  captchaReloadText: {
+    color: '#fff',
+    fontSize: 25,
+    fontWeight: 'bold',
+  },
   fieldError: {
     color: '#d51d1d',
     fontSize: 13,

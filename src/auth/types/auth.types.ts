@@ -3,6 +3,8 @@
 export interface LoginRequest {
   username: string;
   password: string;
+  captchaId: string;
+  captcha: string;
   destiny?: string;
 }
 
