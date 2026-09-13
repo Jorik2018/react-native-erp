@@ -21,7 +21,7 @@ export interface CaptchaValidationResponse {
 
 export async function createCaptcha(previousCaptchaId?:string): Promise<CaptchaResponse> {
   const response = await axios.get<CaptchaResponse>(
-    `${API_URL}/capcha/new?previousCaptchaId=${previousCaptchaId}`,
+    `${API_URL}/captcha/new?previousCaptchaId=${previousCaptchaId}`,
   );
 
   return response.data;
