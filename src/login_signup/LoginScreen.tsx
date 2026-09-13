@@ -1,4 +1,4 @@
-import { useState, createRef, useEffect } from 'react';
+import { useState, createRef, useEffect, useRef } from 'react';
 import {
   StyleSheet,
   TextInput,
@@ -38,6 +38,7 @@ const LoginScreen = ({ navigation, route }: any) => {
   const [captchaValue, setCaptchaValue] = useState('');
   const [captchaError, setCaptchaError] = useState('');
   const [captchaLoading, setCaptchaLoading] = useState(false);
+  const captchaRefreshTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [errortext] = useState('');
   const backgrounds = [
     'https://web.regionancash.gob.pe/fs/images/background/SECHIN.jpg',
@@ -63,16 +64,34 @@ const LoginScreen = ({ navigation, route }: any) => {
       captchaValue.trim().length === 5
     );
 
-  const loadCaptcha = async () => {
+  const loadCaptcha = async (previousCaptchaId?: string) => {
     try {
       setCaptchaLoading(true);
       setCaptchaError('');
 
-      const captcha = await createCaptcha();
+      if (captchaRefreshTimer.current) {
+        clearTimeout(captchaRefreshTimer.current);
+        captchaRefreshTimer.current = null;
+      }
+
+      const captcha = await createCaptcha(previousCaptchaId);
 
       setCaptchaId(captcha.captchaId);
       setCaptchaImage(captcha.image);
       setCaptchaValue('');
+
+      const expiresIn = captcha.expiresIn; // segundos
+
+      // refrescar 5 minutos antes
+      const refreshInSeconds = Math.max(
+        expiresIn - (5 * 60),
+        1,
+      );
+
+      captchaRefreshTimer.current = setTimeout(() => {
+        loadCaptcha(captcha.captchaId);
+      }, refreshInSeconds * 1000);
+
     } catch (error) {
       console.error('Captcha load error:', error);
 
@@ -257,7 +276,7 @@ const LoginScreen = ({ navigation, route }: any) => {
                 />
 
                 <TouchableOpacity
-                  onPress={loadCaptcha}
+                  onPress={() => loadCaptcha(captchaId)}
                   disabled={captchaLoading}
                   style={styles.captchaReloadButton}
                 >

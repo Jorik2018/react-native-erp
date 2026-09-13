@@ -7,6 +7,7 @@ const API_URL = import.meta.env.VITE_API_URL ?? '/api';
 export interface CaptchaResponse {
   captchaId: string;
   image: string;
+  expiresIn: number;
 }
 
 export interface CaptchaValidationRequest {
@@ -18,9 +19,9 @@ export interface CaptchaValidationResponse {
   valid: boolean;
 }
 
-export async function createCaptcha(): Promise<CaptchaResponse> {
+export async function createCaptcha(previousCaptchaId?:string): Promise<CaptchaResponse> {
   const response = await axios.get<CaptchaResponse>(
-    `${API_URL}/capcha/new`,
+    `${API_URL}/capcha/new?previousCaptchaId=${previousCaptchaId}`,
   );
 
   return response.data;
