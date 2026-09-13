@@ -64,44 +64,48 @@ const LoginScreen = ({ navigation, route }: any) => {
       captchaValue.trim().length === 5
     );
 
-  const loadCaptcha = async (previousCaptchaId?: string) => {
-    try {
-      setCaptchaLoading(true);
-      setCaptchaError('');
+const loadCaptcha = async (previousCaptchaId?: string) => {
+  try {
+    setCaptchaLoading(true);
+    setCaptchaError('');
 
-      if (captchaRefreshTimer.current) {
-        clearTimeout(captchaRefreshTimer.current);
-        captchaRefreshTimer.current = null;
-      }
-
-      const captcha = await createCaptcha(previousCaptchaId);
-
-      setCaptchaId(captcha.captchaId);
-      setCaptchaImage(captcha.image);
-      setCaptchaValue('');
-
-      const expiresIn = captcha.expiresIn; // segundos
-
-      // refrescar 5 minutos antes
-      const refreshInSeconds = Math.max(
-        expiresIn - (5 * 60),
-        1,
-      );
-
-      captchaRefreshTimer.current = setTimeout(() => {
-        loadCaptcha(captcha.captchaId);
-      }, refreshInSeconds * 1000);
-
-    } catch (error) {
-      console.error('Captcha load error:', error);
-
-      setCaptchaError(
-        'No se pudo cargar el código de seguridad.',
-      );
-    } finally {
-      setCaptchaLoading(false);
+    if (captchaRefreshTimer.current) {
+      clearTimeout(captchaRefreshTimer.current);
+      captchaRefreshTimer.current = null;
     }
-  };
+
+    const captcha = await createCaptcha(previousCaptchaId);
+
+    setCaptchaId(captcha.captchaId);
+    setCaptchaImage(captcha.image);
+    setCaptchaValue('');
+
+    const expiresIn = Number(captcha.expiresIn);
+
+    // Renovar 30 segundos antes de expirar
+    const refreshInSeconds = Math.max(
+      expiresIn - 30,
+      30,
+    );
+
+    console.log(
+      `Captcha expira en ${expiresIn}s. Renovación en ${refreshInSeconds}s`,
+    );
+
+    captchaRefreshTimer.current = setTimeout(() => {
+      loadCaptcha(captcha.captchaId);
+    }, refreshInSeconds * 1000);
+
+  } catch (error) {
+    console.error('Captcha load error:', error);
+
+    setCaptchaError(
+      'No se pudo cargar el código de seguridad.',
+    );
+  } finally {
+    setCaptchaLoading(false);
+  }
+};
 
   const handleSubmitPress = async () => {
     setEmailError('');
