@@ -82,10 +82,9 @@ const loadCaptcha = async (previousCaptchaId?: string) => {
 
     const expiresIn = Number(captcha.expiresIn);
 
-    // Renovar 30 segundos antes de expirar
     const refreshInSeconds = Math.max(
-      expiresIn - 30,
-      30,
+      expiresIn - 5,
+      1,
     );
 
     console.log(
