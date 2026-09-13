@@ -133,12 +133,19 @@ const LoginScreen = ({ navigation, route }: any) => {
       setUserPassword('');
 
       window.location.assign(target);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Login error:', error);
 
-      setLoginError(
-        'El correo electrónico o la contraseña son incorrectos.',
-      );
+      const status = error?.response?.status;
+      const msg = error?.response?.data?.msg;
+
+      if (status === 400 && msg) {
+        setLoginError(msg);
+      } else {
+        setLoginError(
+          'El correo electrónico o la contraseña son incorrectos.',
+        );
+      }
 
       await loadCaptcha();
     }
@@ -373,7 +380,7 @@ const styles = StyleSheet.create({
     width: 170,
     height: 42,
     backgroundColor: '#fff',
-        borderWidth: 2,
+    borderWidth: 2,
     borderColor: '#d4d4d4',
     borderRadius: 4,
     flexShrink: 0,
